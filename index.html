@@ -12,7 +12,7 @@
   }
   * { box-sizing:border-box; }
   body { margin:0; background:#eef3f2; color:var(--ink);
-    font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif; }
+    font-family:"Pretendard","Malgun Gothic","Apple SD Gothic Neo",sans-serif; word-break:keep-all; }
 
   .toolbar { position:sticky; top:0; z-index:10; background:#fff;
     border-bottom:2px solid var(--mint); padding:9px 14px;
@@ -27,7 +27,7 @@
     background:var(--mint); border-radius:10px; padding:6px 10px; cursor:pointer; }
   .toolbar .code-chip:hover { background:var(--mint-dark); color:#fff; }
 
-  .sheet { width:210mm; height:296mm; margin:14px auto; padding:11mm 11mm 9mm;
+  .sheet { width:210mm; height:296mm; margin:14px auto; padding:10mm 11mm 9mm;
     background:#fff; box-shadow:0 2px 14px rgba(0,0,0,.12); position:relative;
     display:flex; flex-direction:column; }
   .sheet .filler { flex:1; }
@@ -61,7 +61,7 @@
   .hl-y { background:var(--hl-y); padding:0 1mm; }
   .hl-b { background:var(--hl-b); padding:0 1mm; }
   .circ { border:2px solid var(--red); border-radius:999px; padding:0 1.5mm; }
-  .example-grids { display:flex; gap:8mm; align-items:flex-start; padding:1mm 0; zoom:0.78; }
+  .example-grids { display:flex; gap:8mm; align-items:flex-start; padding:1mm 0; zoom:0.72; }
 
   .rows { margin-top:0.5mm; flex:1; display:grid; grid-auto-rows:minmax(min-content, 15.2mm); align-content:start; }
   .prob-row { border-bottom:1.2px solid #ccc; padding:1mm 1mm; font-size:13.5pt;
@@ -81,6 +81,8 @@
   .bx { display:inline-block; min-width:9.5mm; min-height:8mm; border:1.6px solid #333;
     border-radius:1mm; text-align:center; vertical-align:middle; padding:0 1mm; }
   .opcirc { border:1.8px solid var(--red); border-radius:999px; padding:0 1mm; white-space:nowrap; }
+  .opcirc + .opcirc { margin-left:1.6mm; }
+  .blank-w { display:inline-block; min-width:9mm; }
   .sent { font-size:10.5pt; }
   .sent .bx { min-width:8mm; min-height:7mm; }
   u.pair { text-decoration-thickness:2px; }
@@ -113,10 +115,12 @@
   svg.brk { position:absolute; right:-1.4mm; top:0; height:100%; width:3.4mm; overflow:visible; }
 
   .divwrap { display:flex; gap:2.5mm; align-items:flex-start; }
-  .divside { font-size:8.5pt; display:flex; flex-direction:column; gap:1.5mm; width:47mm; }
-  .divside .sbox { border:1.2px solid #999; border-radius:1.5mm; padding:1.2mm 2mm; margin-bottom:0; }
+  .divside { font-size:8.5pt; display:flex; flex-direction:column; gap:1mm; width:47mm; }
+  .divside .sbox { border:1.2px solid #999; border-radius:1.5mm; padding:0.8mm 2mm; margin-bottom:0; }
   .sbox-cap { font-size:6.5pt; color:#999; font-weight:400; line-height:1.2; }
   .divside .sbox .st { font-weight:700; color:#444; }
+  .divside .quot { white-space:nowrap; }
+  .cbox.qb { min-width:5.6mm; min-height:4.8mm; margin:0 0.3mm; }
   .cbox { display:inline-block; min-width:7mm; min-height:6.5mm; border:1.2px solid #333;
     border-radius:1mm; text-align:center; vertical-align:middle; font-weight:700; padding:0 0.5mm; }
 
@@ -242,7 +246,7 @@ function vaddExpanded(p, show, blank, notes) {
   const oSum = oa + ob, tSum = ta * 10 + tb * 10, total = p.a + p.b;
   h = row("", numCells(p.a, W, g)) + row("+", numCells(p.b, W, g));
   h += row("", numCells(show ? oSum : null, W, m), nt(`${oa}+${ob}`), "rule");
-  h += row("+", numCells(show ? tSum : null, W, m), nt(`${ta * 10}+${tb * 10}`));
+  h += row(show ? "+" : "", numCells(show ? tSum : null, W, m), nt(`${ta * 10}+${tb * 10}`));
   h += row("", numCells(show ? total : null, W, m), nt(`${oSum}+${tSum}`), "rule");
   return vt(h);
 }
@@ -391,6 +395,13 @@ function divParts(q) {
   return out;
 }
 
+/* 몫을 자리값 부분몫으로 분해 — 0인 자리도 단계로 포함 (문제지 ①~④ 단계 힌트·"몫: 80 + 0" 표기와 일치) */
+function divPartsZero(q) {
+  const s = String(q), out = [];
+  for (let i = 0; i < s.length; i++) out.push(+s[i] * Math.pow(10, s.length - 1 - i));
+  return out;
+}
+
 /* 나눗셈 세로셈 — 몫 한 줄(자리색) + 나눗셈 기호(곡선 괄호·가로선) + 부분몫 빼기 단계 */
 function longDiv(p, show, blank, opts) {
   opts = opts || {};
@@ -410,7 +421,7 @@ function longDiv(p, show, blank, opts) {
     return vt(h, dcls);
   }
   const W = ndig(p.n);
-  const parts = divParts(p.q);
+  const parts = divPartsZero(p.q);
   const nt = t => opts.notes ? t : "";
   let h = row("", numCells(p.q, W, "ans", { colorByPlace: true }), p.r > 0 ? AV(`…${p.r}`) : "");
   h += row(`${p.d} <svg class="brk" viewBox="0 0 10 40" preserveAspectRatio="none"><path d="M6 0 Q 13 20 6 40" fill="none" stroke="#222" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`, numCells(p.n, W, "given"), "", "rule");
@@ -438,10 +449,11 @@ function divSideBoxInner(p, show, blank, opts) {
   const parts = divParts(p.q);
   let quot = "";
   if (show && (parts.length > 1 || opts.showQuot)) {
-    quot = `<div>몫: ${parts.map(AV).join(" + ")}${parts.length > 1 ? ` = ${AV(p.q)}` : ""}</div>`;
+    const qs = String(p.q), pl = opts.showQuot ? qs.split("").map((d, i) => +d * Math.pow(10, qs.length - 1 - i)) : parts;
+    quot = `<div>몫: ${pl.map(AV).join(" + ")}${pl.length > 1 ? ` = ${AV(p.q)}` : ""}</div>`;
   } else if (!show && opts.showQuot) {
-    const bx = '<span class="cbox">&nbsp;</span>';
-    quot = `<div>몫: ${Array(opts.fixedQ || 2).fill(bx).join(" + ")} = ${bx}</div>`;
+    const bx = '<span class="cbox qb">&nbsp;</span>';
+    quot = `<div class="quot">몫: ${Array(opts.fixedQ || 2).fill(bx).join("+")}=${bx}</div>`;
   }
   return `<div class="sbox"><div class="st">&lt;나눗셈식&gt;</div><div>${p.n} ÷ ${p.d} = ${B(p.q)} ${p.r > 0 || !show ? "…" : ""} ${p.r > 0 || !show ? B(p.r) : ""}</div>${quot}</div>
     <div class="sbox"><div class="st">&lt;검산식&gt;</div>${cap}<div>( ${B(p.d)} × ${B(p.q)} ) + ${B(p.r)}</div><div>= ${B(p.d * p.q)} + ${B(p.r)} = ${B(p.n)}</div></div>`;
@@ -494,8 +506,8 @@ function divProblem(p, show, blank, opts) {
 
 /* 곱셈표 (2단~maxN단, 제곱수 대각선 강조) */
 function timesTable(maxN) {
-  const cell = maxN > 9 ? "12.6mm" : "17mm";
-  const fs = maxN > 9 ? "11pt" : "14pt";
+  const cell = maxN > 9 ? "14mm" : "20mm";
+  const fs = maxN > 9 ? "12pt" : "16pt";
   let h = `<tr><td class="tt-h tt-corner">×</td>`;
   for (let c = 2; c <= maxN; c++) h += `<td class="tt-h">${c}</td>`;
   h += `</tr>`;
@@ -530,10 +542,10 @@ SHEETS.push({
   gen(rng, page, idx) {
     if (page === 0) {
       if (idx === 8) return { a: 6, f: 0, l: 1 };
-      if (idx < 8) return { a: rngInt(rng, 1, 9), f: 1 };
+      if (idx < 8) return tryGen(rng, () => ({ a: rngInt(rng, 1, 9), f: 1 }), p => p.a !== 2);
       return tryGen(rng, () => ({ a: rngInt(rng, 1, 9), f: 0 }), p => p.a !== 6);
     }
-    return tryGen(rng, () => ({ a: rngInt(rng, 1, 9), b: rngInt(rng, 1, 9) }), p => p.a !== p.b);
+    return tryGen(rng, () => ({ a: rngInt(rng, 1, 9), b: rngInt(rng, 1, 9) }), p => p.a !== p.b && p.a + p.b !== 10);
   },
   render(p, show, page) {
     if (page === 0) {
@@ -546,7 +558,7 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as1_makeTen_back", book: "덧셈뺄셈 1단계", cat: "as", layout: "rows",
-  title: "받아올림 - 뒷수 10만들기", counts: [15, 16],
+  title: "받아올림 - 뒷수 10만들기", counts: [14, 16],
   readAloud: "소리 내어 읽어보세요.",
   principle: `뒷수 5를 10으로 만들기 위해 7을 2와 5로 가릅니다. <mark>더하기7은 더하기2, 더하기5와 같습니다.</mark>`,
   encourage: "꾸준한 내가 멋있다!",
@@ -562,13 +574,13 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as1_makeTen_front", book: "덧셈뺄셈 1단계", cat: "as", layout: "rows",
-  title: "받아올림 - 앞수 10만들기", counts: [15, 16],
+  title: "받아올림 - 앞수 10만들기", counts: [14, 16],
   readAloud: "소리 내어 읽어보세요.",
   principle: `앞수 8을 10으로 만들기 위해 7을 2와 5로 가릅니다. <mark>더하기7은 더하기2, 더하기5와 같습니다.</mark>`,
   encourage: "(^▽^) 오늘도 성장하는 중!",
   example: EX(`8 <span class="hl-y">+ 7</span> = <span class="circ">8 + 2</span> + 5 = <span class="circ">10</span> + 5 = 15`),
   gen(rng) {
-    return tryGen(rng, () => ({ a: rngInt(rng, 3, 9), b: rngInt(rng, 3, 9) }), p => p.a + p.b >= 11);
+    return tryGen(rng, () => ({ a: rngInt(rng, 3, 9), b: rngInt(rng, 4, 9) }), p => p.a + p.b >= 11);
   },
   render(p, show) {
     const need = 10 - p.a, rest = p.b - need;
@@ -578,14 +590,14 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as1_makeTens_back", book: "덧셈뺄셈 1단계", cat: "as", layout: "rows",
-  title: "받아올림 - 뒷수 몇십 만들기", counts: [15, 16],
+  title: "받아올림 - 뒷수 몇십 만들기", counts: [14, 16],
   readAloud: "소리 내어 읽어보세요.",
   principle: `뒷수를 몇십으로 만들기 위해 앞수를 필요한 만큼 가릅니다. <mark>9는 4 더하기 5와 같습니다.</mark>`,
   encourage: "(●'◡'●) 잘하고 있어요!",
   example: EX(`<span class="hl-y">9</span> + 35 = 4 + <span class="circ">5 + 35</span> = 4 + <span class="circ">40</span> = 44`),
   gen(rng, page) {
     const hi = page === 0 ? 57 : 87;
-    return tryGen(rng, () => ({ a: rngInt(rng, 2, 9), b: rngInt(rng, 13, hi) }),
+    return tryGen(rng, () => ({ a: rngInt(rng, page === 0 ? 4 : 3, 9), b: rngInt(rng, 13, hi) }),
       p => ones(p.b) >= 1 && p.a + ones(p.b) >= 11);
   },
   render(p, show) {
@@ -596,14 +608,14 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as1_makeTens_front", book: "덧셈뺄셈 1단계", cat: "as", layout: "rows",
-  title: "받아올림 - 앞수 몇십 만들기", counts: [15, 16],
+  title: "받아올림 - 앞수 몇십 만들기", counts: [14, 16],
   readAloud: "소리 내어 읽어보세요.",
   principle: `앞수를 몇십으로 만들기 위해 뒷수를 필요한 만큼 가릅니다. <mark>7은 2 더하기 5와 같습니다.</mark>`,
   encourage: "(^0^)/ 파이팅!",
   example: EX(`78 <span class="hl-y">+ 7</span> = <span class="circ">78 + 2</span> + 5 = <span class="circ">80</span> + 5 = 85`),
   gen(rng, page) {
     const lo = page === 0 ? 13 : 55, hi = page === 0 ? 57 : 94;
-    return tryGen(rng, () => ({ a: rngInt(rng, lo, hi), b: rngInt(rng, 2, 9) }),
+    return tryGen(rng, () => ({ a: rngInt(rng, lo, hi), b: rngInt(rng, 4, 9) }),
       p => ones(p.a) >= 1 && ones(p.a) + p.b >= 11);
   },
   render(p, show) {
@@ -613,7 +625,7 @@ SHEETS.push({
 });
 
 SHEETS.push({
-  id: "as1_add2d_nocarry", book: "덧셈뺄셈 1단계", cat: "as", layout: "rows",
+  id: "as1_add2d_nocarry", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, book: "덧셈뺄셈 1단계", cat: "as", layout: "rows",
   title: "받아올림 없는 두 자리 수 덧셈", counts: [4, 5],
   readAloud: "본격적으로 식을 써 봅시다. 두근두근!",
   principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다. 십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>답이 바로 보이는 쉬운 문제지만, 우리는 체계적으로 식 쓰는 능력을 길러봅시다. :-D`,
@@ -633,7 +645,7 @@ SHEETS.push({
 
 /* ── 덧셈뺄셈 2단계 ── */
 SHEETS.push({
-  id: "as2_carry_m1", book: "덧셈뺄셈 2단계", cat: "as", layout: "rows",
+  id: "as2_carry_m1", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, book: "덧셈뺄셈 2단계", cat: "as", layout: "rows",
   title: "받아올림 방법1 십의자리, 일의자리", counts: [4, 5],
   readAloud: "소리 내어 읽어보세요.",
   principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다. 십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>여기까지는 같지만 받아올림이 추가됩니다. 능력치 +1 올라갑니다. (/^▽^)/`,
@@ -694,11 +706,10 @@ SHEETS.push({
   principle: `몇십을 더하고 나머지를 뺍니다. <mark>더하기 97</mark>을 <mark>더하기 100, 빼기 3</mark>으로 가릅니다.<br>복잡해 보이지만 몇 번 해 보면 쉽습니다. 뭐든 그런 거 아니겠어요! 💡`,
   encourage: "",
   example: EX(`43 <span class="hl-y">+ 97</span> = 43 <span class="hl-y">+ 100 − 3</span> = 143 − 3 = 140 &nbsp;&nbsp;|&nbsp;&nbsp; 49 <span class="hl-y">+ 38</span> = 49 <span class="hl-y">+ 40 − 2</span> = 89 − 2 = 87`),
-  gen(rng) {
-    return tryGen(rng, () => {
-      const big = rng() < 0.15;
-      return { a: rngInt(rng, 12, 98), b: big ? rngInt(rng, 95, 99) : rngInt(rng, 15, 89) };
-    }, p => ones(p.b) >= 4 && ones(p.b) <= 9);
+  gen(rng, page, idx) {
+    const big = idx >= 6;
+    return tryGen(rng, () => ({ a: rngInt(rng, 12, 98), b: big ? rngInt(rng, 95, 98) : rngInt(rng, 15, 89) }),
+      p => ones(p.b) >= 4 && ones(p.b) <= 8);
   },
   render(p, show) {
     const comp = 10 - ones(p.b), B10 = p.b + comp;
@@ -709,7 +720,7 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as2_borrow_basic", book: "덧셈뺄셈 2단계", cat: "as", layout: "rows",
-  title: "받아내림 기초 - 빼고 빼기", counts: [15, 16],
+  title: "받아내림 기초 - 빼고 빼기", counts: [14, 16],
   readAloud: "소리 내어 읽어보세요. ｡^‿^｡",
   principle: `앞수 16의 일의 자리 6만큼 먼저 빼고 나머지를 또 뺍니다. <mark>빼기9는 빼기6, 빼기3과 같습니다.</mark>`,
   encourage: "💪 오늘도 힘내요!",
@@ -717,7 +728,7 @@ SHEETS.push({
   gen(rng, page) {
     if (page === 0) return tryGen(rng, () => ({ a: rngInt(rng, 11, 18), b: rngInt(rng, 2, 9) }),
       p => ones(p.a) < p.b && ones(p.a) >= 1);
-    return tryGen(rng, () => ({ a: rngInt(rng, 22, 94), b: rngInt(rng, 2, 9) }),
+    return tryGen(rng, () => ({ a: rngInt(rng, 22, 94), b: rngInt(rng, 3, 9) }),
       p => ones(p.a) < p.b && ones(p.a) >= 1);
   },
   render(p, show) {
@@ -790,7 +801,7 @@ SHEETS.push({
   example: EX(`85 <span class="hl-y">− 56</span> = 85 <span class="hl-y">− 60 + 4</span> = 25 + 4 = 29`),
   gen(rng) {
     return tryGen(rng, () => ({ a: rngInt(rng, 21, 92), b: rngInt(rng, 15, 79) }),
-      p => p.a > p.b && ones(p.a) < ones(p.b) && ones(p.b) >= 4 && p.a - (p.b + 10 - ones(p.b)) >= 1);
+      p => p.a > p.b && ones(p.a) < ones(p.b) && ones(p.b) >= 4 && ones(p.b) <= 8 && p.a - (p.b + 10 - ones(p.b)) >= 1);
   },
   render(p, show) {
     const comp = 10 - ones(p.b), B10 = p.b + comp;
@@ -801,7 +812,7 @@ SHEETS.push({
 
 /* ── 덧셈뺄셈 3단계 (세로셈) ── */
 SHEETS.push({
-  id: "as3_vadd_nocarry", cols: 2, book: "덧셈뺄셈 3단계", cat: "as", layout: "grid",
+  id: "as3_vadd_nocarry", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, cols: 2, book: "덧셈뺄셈 3단계", cat: "as", layout: "grid",
   title: "덧셈 세로셈 - 받아올림 없음", counts: [6, 6],
   readAloud: "수의 자리에 맞게 씁니다.",
   principle: `일의 자리끼리 더하고, 십의 자리끼리 더합니다.`,
@@ -815,7 +826,7 @@ SHEETS.push({
 });
 
 SHEETS.push({
-  id: "as3_vadd_carry", cols: 2, book: "덧셈뺄셈 3단계", cat: "as", layout: "grid",
+  id: "as3_vadd_carry", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, cols: 2, book: "덧셈뺄셈 3단계", cat: "as", layout: "grid",
   title: "덧셈 세로셈 - 받아올림 있음", counts: [6, 6],
   readAloud: "수의 자리에 맞게 씁니다.",
   principle: `일의 자리의 합을 자리에 맞춰 씁니다.`,
@@ -829,7 +840,7 @@ SHEETS.push({
 });
 
 SHEETS.push({
-  id: "as3_vadd_simple", cols: 4, book: "덧셈뺄셈 3단계", cat: "as", layout: "grid",
+  id: "as3_vadd_simple", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, cols: 4, book: "덧셈뺄셈 3단계", cat: "as", layout: "grid",
   title: "간단한 덧셈 세로셈", counts: [12, 16], blankCounts: [16, 16],
   readAloud: "수의 자리에 맞게 씁니다.",
   principle: `일의 자리 계산 8+5=13 → 13의 10을 십의 자리 위, <mark>받아올림 쓰는 자리</mark>에 씁니다.<br>십의 자리 계산 10+50+90=150 → 받아올림한 10을 함께 더합니다. 150의 100은 백의 자리에 씁니다.`,
@@ -851,7 +862,7 @@ SHEETS.push({
   exampleProb: { a: 68, b: 52 },
   gen(rng) {
     return tryGen(rng, () => ({ a: rngInt(rng, 32, 89), b: rngInt(rng, 12, 77) }),
-      p => p.a > p.b && ones(p.a) > ones(p.b) && tens(p.a) > tens(p.b));
+      p => p.a > p.b && ones(p.b) >= 1 && ones(p.a) > ones(p.b) && tens(p.a) > tens(p.b));
   },
   render(p, show, page, blank) { return vsubExpanded(p, show, blank, false, page === -1); }
 });
@@ -892,10 +903,11 @@ SHEETS.push({
   principle: `덧셈식과 뺄셈식은 연결되어 있습니다. 연결되는 덧셈식과 뺄셈식을 만들어 써 봅시다. 우리는 똑똑해지고 있습니다. ˘◡˘`,
   encourage: "",
   example: EX(`(덧셈) <span class="hl-y">27</span> <span class="hl-b">+ 34</span> = 61, &nbsp;<span class="hl-b">34</span> + <span class="hl-y">27</span> = 61 &nbsp;→&nbsp; (뺄셈) 61 − <span class="hl-y">27</span> = <span class="hl-b">34</span>, &nbsp;61 − <span class="hl-b">34</span> = <span class="hl-y">27</span>`),
-  gen(rng) {
-    let a = rngInt(rng, 11, 89), b = rngInt(rng, 11, 89);
+  keyOf(p) { return `${p.a}+${p.b}`; },
+  gen(rng, page, idx) {
+    let a = rngInt(rng, 11, 89), b = tryGen(rng, () => rngInt(rng, 11, 89), v => v !== a);
     if (a > b) { const t = a; a = b; b = t; }
-    return { a, b, g: rng() < 0.5 ? 1 : 0, s: rng() < 0.5 ? 1 : 0 };
+    return { a, b, g: idx % 2, s: Math.floor(idx / 2) % 2 };
   },
   render(p, show, page) {
     const c = p.a + p.b;
@@ -912,7 +924,7 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as4_add3_front", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
-  title: "세 수의 덧셈 - 앞부터", counts: [15, 16],
+  title: "세 수의 덧셈 - 앞부터", counts: [14, 16],
   readAloud: "앞의 두 수를 먼저 더합니다.",
   principle: `빈 자리에 세로셈을 써서 계산해도 좋습니다. 세로셈을 쓸 때는 수의 자리를 맞춰 쓰세요.<br>웃으면서 해봅시다, 그게 진짜 실력입니다. 😄`,
   encourage: "",
@@ -928,7 +940,7 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as4_add3_back", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
-  title: "세 수의 덧셈 - 뒤부터", counts: [15, 16],
+  title: "세 수의 덧셈 - 뒤부터", counts: [14, 16],
   readAloud: "뒤의 두 수를 먼저 더합니다.",
   principle: `빈 자리에 세로셈을 써서 계산해도 좋습니다. 세로셈을 쓸 때는 수의 자리를 맞춰 쓰세요. 마음은 가볍게, 목표는 단단하게! 🐻`,
   encourage: "",
@@ -944,16 +956,16 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as4_sub3_front", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
-  title: "세 수의 뺄셈 - 앞부터", counts: [15, 16],
+  title: "세 수의 뺄셈 - 앞부터", counts: [14, 16],
   readAloud: "첫 번째 수에서 두 번째 수를 먼저 뺍니다.",
   principle: `빈 자리에 세로셈을 써서 계산해도 좋습니다. 세로셈을 쓸 때는 수의 자리를 맞춰 쓰세요.<br>꾸준한 노력은 반드시 빛을 발합니다. \\( ˙▿˙ )/`,
   encourage: "",
   example: EX(`<span class="circ">98 − 9</span> − 7 = <span class="circ">89</span> − 7 = 82`),
   gen(rng, page) {
     if (page === 0) return tryGen(rng, () => ({ x: rngInt(rng, 20, 99), y: rngInt(rng, 1, 9), z: rngInt(rng, 1, 9) }),
-      p => p.x - p.y - p.z >= 0);
+      p => p.x - p.y - p.z >= 5);
     return tryGen(rng, () => ({ x: rngInt(rng, 70, 99), y: rngInt(rng, 11, 69), z: rngInt(rng, 11, 69) }),
-      p => p.x - p.y - p.z >= 0);
+      p => p.x - p.y - p.z >= 5);
   },
   render(p, show) {
     return `<div class="prob-row">${p.x} − ${p.y} − ${p.z} = ${SEG(show, `${p.x - p.y} − ${p.z} = ${p.x - p.y - p.z}`)}</div>`;
@@ -962,16 +974,16 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as4_sub3_back", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
-  title: "세 수의 뺄셈 - 뒤부터", counts: [15, 16],
+  title: "세 수의 뺄셈 - 뒤부터", counts: [14, 16],
   readAloud: "빼는 두 수를 먼저 계산합니다.",
   principle: `<mark>빼기 7, 빼기 8은 빼기 15와 같습니다.</mark> 빈 자리에 세로셈을 써서 계산해도 좋습니다.<br>지치더라도 멈추지 말고 해냅시다. 💫`,
   encourage: "",
   example: EX(`95 <span class="circ">− 7</span> <span class="circ">− 8</span> = 95 <span class="circ">− 15</span> = 80`),
   gen(rng, page) {
     if (page === 0) return tryGen(rng, () => ({ x: rngInt(rng, 20, 99), y: rngInt(rng, 1, 9), z: rngInt(rng, 1, 9) }),
-      p => p.x - p.y - p.z >= 0);
+      p => p.x - p.y - p.z >= 5);
     return tryGen(rng, () => ({ x: rngInt(rng, 70, 99), y: rngInt(rng, 11, 69), z: rngInt(rng, 11, 69) }),
-      p => p.x - p.y - p.z >= 0);
+      p => p.x - p.y - p.z >= 5);
   },
   render(p, show) {
     return `<div class="prob-row">${p.x} − ${p.y} − ${p.z} = ${SEG(show, `${p.x} − ${p.y + p.z} = ${p.x - p.y - p.z}`)}</div>`;
@@ -980,7 +992,7 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as4_mix3_front", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
-  title: "세 수의 덧뺄셈 - 앞부터", counts: [15, 16],
+  title: "세 수의 덧뺄셈 - 앞부터", counts: [14, 16],
   readAloud: "앞에서부터 차례로 계산합니다.",
   principle: `빈 자리에 세로셈을 써서 계산해도 좋습니다. 세로셈을 쓸 때는 수의 자리를 맞춰 쓰세요. 오늘도 멋지게 실력을 쌓아봅시다. ( ˆ‿ˆ )`,
   encourage: "",
@@ -993,7 +1005,7 @@ SHEETS.push({
       const y = small ? rngInt(rng, 1, 9) : rngInt(rng, 11, 59);
       const z = small ? rngInt(rng, 1, 9) : rngInt(rng, 11, 59);
       return { x, y, z, o1, o2 };
-    }, p => p.x + p.o1 * p.y >= 1 && p.x + p.o1 * p.y + p.o2 * p.z >= 0);
+    }, p => p.y !== p.z && p.x + p.o1 * p.y >= 1 && p.x + p.o1 * p.y <= 99 && p.x + p.o1 * p.y + p.o2 * p.z >= 10);
   },
   render(p, show) {
     const s1 = p.o1 > 0 ? "+" : "−", s2 = p.o2 > 0 ? "+" : "−";
@@ -1004,12 +1016,12 @@ SHEETS.push({
 
 SHEETS.push({
   id: "as4_mix3_back", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
-  title: "세 수의 덧뺄셈 - 뒤부터", counts: [13, 14],
+  title: "세 수의 덧뺄셈 - 뒤부터", counts: [14, 15],
   readAloud: "뒤에 있는 두 수를 먼저 계산합니다.",
   principle: `<mark>더하기 9, 빼기 6은 더하기 3과 같습니다.</mark> <mark>빼기 9와 더하기 8은 빼기 1과 같습니다.</mark><br>이것을 이해하는 여러분은 <b>수.학.천.재.</b>입니다. 바로 지금 이 순간! 여러분의 연산력이 쑥쑥 올라갑니다. ✈`,
   encourage: "",
   example: EX(`43 <span class="opcirc">+ 9</span><span class="opcirc">− 6</span> = 43 <span class="opcirc">+ 3</span> = 46 &nbsp;&nbsp;|&nbsp;&nbsp; 11 <span class="opcirc">− 9</span><span class="opcirc">+ 8</span> = 11 <span class="opcirc">− 1</span> = 10`),
-  page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;업그레이드!&gt;</span> <mark>빼기 19와 더하기 59는 더하기 40과 같습니다.</mark> 꼭꼭 세로셈을 써서 계산하세요. 정확한 것이 실력!<br>38 <span class="opcirc">− 19</span><span class="opcirc">+ 59</span> = 38 <span class="opcirc">+ 40</span> = 78</div>`,
+  page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;업그레이드!&gt;</span> <mark>빼기 19와 더하기 59는 더하기 40과 같습니다.</mark> 꼭꼭 세로셈을 써서 계산하세요. 정확한 것이 실력!<br>38 <span class="opcirc">− 19</span><span class="opcirc">+ 59</span> = 38 − 19 <span class="hl-y">+ 19 + 40</span> = 38 <span class="opcirc">+ 40</span> = 78</div>`,
   gen(rng, page) {
     const small = page === 0;
     return tryGen(rng, () => {
@@ -1018,21 +1030,28 @@ SHEETS.push({
       const y = small ? rngInt(rng, 1, 9) : rngInt(rng, 11, 69);
       const z = small ? rngInt(rng, 1, 9) : rngInt(rng, 11, 69);
       return { x, y, z, o1, o2 };
-    }, p => p.x + p.o1 * p.y + p.o2 * p.z >= 0 && p.o1 * p.y + p.o2 * p.z !== 0);
+    }, p => p.x + p.o1 * p.y >= 1 && p.x + p.o1 * p.y + p.o2 * p.z >= 0 && p.x + p.o1 * p.y + p.o2 * p.z <= 99 && p.o1 * p.y + p.o2 * p.z !== 0);
   },
-  render(p, show) {
+  render(p, show, page) {
     const s1 = p.o1 > 0 ? "+" : "−", s2 = p.o2 > 0 ? "+" : "−";
     const net = p.o1 * p.y + p.o2 * p.z;
     const netStr = net >= 0 ? `+ ${net}` : `− ${-net}`;
     const ans = p.x + net;
-    return `<div class="prob-row">${p.x} <span class="opcirc">${s1} ${p.y}</span><span class="opcirc">${s2} ${p.z}</span> = ${SEG(show, `${p.x} ${netStr} = ${ans}`)}</div>`;
+    let mid = "";
+    if (page === 1) {
+      const d = Math.abs(net), sm = Math.min(p.y, p.z);
+      mid = p.y > p.z
+        ? `${p.x} ${s1} ${sm} ${s1} ${d} ${s2} ${p.z} = `
+        : `${p.x} ${s1} ${p.y} ${s2} ${sm} ${s2} ${d} = `;
+    }
+    return `<div class="prob-row">${p.x} <span class="opcirc">${s1} ${p.y}</span><span class="opcirc">${s2} ${p.z}</span> = ${SEG(show, `${mid}${p.x} ${netStr} = ${ans}`)}</div>`;
   }
 });
 
 /* ── 곱셈 1단계 ── */
 SHEETS.push({
   id: "m1_repadd", book: "곱셈 1단계", cat: "md", layout: "rows",
-  title: "동수누가 同數累加 (같은 수를 반복하여 더한다)", counts: [12, 15],
+  title: "동수누가 同數累加 (같은 수를 반복하여 더한다)", counts: [13, 16],
   readAloud: "소리 내어 읽기",
   principle: `<span style="font-size:8.5pt"><mark>같을 동(同)</mark> <mark>셈 수(數)</mark> <mark>거듭 누(累)</mark> <mark>더할 가(加)</mark></span><br><b>동수누가: 곱셈은 같은 수를 반복하여 더하는 것입니다.</b><br>4 곱하기 5는 4를 5번 더한다는 뜻입니다. 4 × 5는 4 + 4 + 4 + 4 + 4와 같습니다. 곱셈을 덧셈으로, 덧셈을 곱셈으로 바꾸어 써 봅시다.`,
   encourage: "티끌 모아 태산 🐢 하루의 작은 공부가 모여, 높은 실력이 완성됩니다.",
@@ -1043,7 +1062,7 @@ SHEETS.push({
   gen(rng, page, idx) {
     const bigPool = [10, 11, 12, 15, 20, 100, 200, 300, 500];
     const big = page === 0 ? idx >= 8 : idx >= 10;
-    const one = !big && page === 1 && rng() < 0.08;
+    const one = !big && page === 1 && idx === 5;
     const a = big ? rngPick(rng, bigPool) : (one ? 1 : rngInt(rng, 2, 9));
     let b;
     if (page === 0) b = big ? rngInt(rng, 2, a >= 100 ? 7 : 4) : rngInt(rng, 2, 7);
@@ -1060,7 +1079,7 @@ SHEETS.push({
   id: "m1_convert", book: "곱셈 1단계", cat: "md", layout: "rows",
   title: "동수누가 바꾸기", counts: [7, 8],
   readAloud: "소리 내어 읽기",
-  principle: `같은 수의 덧셈을 이용해서 곱셈을 바꿀 수 있어요.<br>가르기 방법) 8 = 4 + 4으로, 9 = 3 + 3 + 3으로 바꿀 수 있습니다.<br>모으기·바꾸기 방법) 3 + 3 = 2 + 2 + 2 → 3을 2번 더한 것과 2를 3번 더한 것은 같습니다. ｡^‿^｡ 해보자, 해내자!`,
+  principle: `같은 수의 덧셈을 이용해서 곱셈을 바꿀 수 있어요.<br>가르기 방법) 8 = 4 + 4로, 9 = 3 + 3 + 3으로 바꿀 수 있습니다.<br>모으기·바꾸기 방법) 3 + 3 = 2 + 2 + 2 → 3을 2번 더한 것과 2를 3번 더한 것은 같습니다. ｡^‿^｡ 해보자, 해내자!`,
   encourage: "",
   example: EX(`8 × 5 = 8 + 8 + 8 + 8 + 8 = 4+4+4+4+4+4+4+4+4+4 = 4 × 10 = 40`),
   gen(rng, page) {
@@ -1093,9 +1112,9 @@ SHEETS.push({
   encourage: "",
   example: EX(`12 × 3 = 12 + 12 + 12<br>= 10+2 &nbsp;+&nbsp; 10+2 &nbsp;+&nbsp; 10+2<br>= 10+10+10 &nbsp;+&nbsp; 2+2+2<br>= 10 × 3 &nbsp;+&nbsp; 2 × 3<br>= 30 + 6 &nbsp;=&nbsp; 36`),
   gen(rng, page, idx) {
-    if (page === 0) return tryGen(rng, () => ({ a: rngInt(rng, 11, 29), b: rngInt(rng, 2, 5) }), p => ones(p.a) >= 1);
-    if (idx >= 1) return { a: rngPick(rng, [110, 120, 130, 210, 220, 105, 204, 302, 405]), b: rngInt(rng, 2, 5) };
-    return tryGen(rng, () => ({ a: rngInt(rng, 31, 59), b: rngInt(rng, 2, 5) }), p => ones(p.a) >= 1);
+    if (page === 0) return tryGen(rng, () => ({ a: rngInt(rng, 11, 29), b: rngInt(rng, 3, 5) }), p => ones(p.a) >= 1);
+    if (idx >= 1) return { a: rngPick(rng, [110, 120, 130, 210, 220, 105, 204, 302, 405]), b: rngInt(rng, 3, 5) };
+    return tryGen(rng, () => ({ a: rngInt(rng, 31, 59), b: rngInt(rng, 3, 5) }), p => ones(p.a) >= 1);
   },
   render(p, show) {
     const parts = divParts(p.a);
@@ -1118,7 +1137,7 @@ SHEETS.push({
   gen(rng, page, idx) {
     return tryGen(rng, () => {
       const big = page === 1 && idx >= 1;
-      return { a: big ? rngPick(rng, [98, 99]) : rngInt(rng, 17, 59), b: rngInt(rng, 2, 4) };
+      return { a: big ? rngPick(rng, [98, 99]) : rngInt(rng, 17, 59), b: rngInt(rng, 3, 4) };
     }, p => ones(p.a) >= 7);
   },
   render(p, show) {
@@ -1146,7 +1165,7 @@ SHEETS.push({
 
 SHEETS.push({
   id: "m2_gugudan", book: "곱셈 2단계", cat: "md", layout: "rows",
-  rowClass: "two-col compact", allowRepeat: true,
+  rowClass: "two-col compact", pageUnique: true,
   title: "곱셈구구", counts: [40, 40],
   readAloud: "",
   principle: `구구단을 잘 외웠나요? 빠르고 정확하게 문제를 해결해봅시다. 🚀<br>다 푸는 데 걸린 시간을 재 보세요. ⏳ (&nbsp;&nbsp;&nbsp;&nbsp;) 분 (&nbsp;&nbsp;&nbsp;&nbsp;) 초`,
@@ -1154,7 +1173,7 @@ SHEETS.push({
   example: "",
   gen(rng) {
     const zeroOne = rng() < 0.15;
-    return { a: zeroOne ? rngPick(rng, [0, 1]) : rngInt(rng, 2, 9), b: rngInt(rng, 0, 9) };
+    return tryGen(rng, () => ({ a: zeroOne ? rngPick(rng, [0, 1]) : rngInt(rng, 2, 9), b: rngInt(rng, 0, 9) }), p => p.a + p.b > 0);
   },
   render(p, show) {
     return `<div class="prob-row">${p.a} × ${p.b} = ${SEG(show, p.a * p.b)}</div>`;
@@ -1163,24 +1182,24 @@ SHEETS.push({
 
 SHEETS.push({
   id: "m2_rule12", book: "곱셈 2단계", cat: "md", layout: "rows",
-  title: "곱셈규칙①② 교환법칙·결합법칙", counts: [13, 14],
+  title: "곱셈규칙①② 교환법칙·결합법칙", counts: [13, 15],
   readAloud: "소리 내어 읽기",
   principle: `<b>교환법칙 🔄</b> 곱셈을 직사각형의 넓이로 나타낼 수 있습니다. 3 × 2 ${rectDiag(3, 2)} ↻ 돌리면 → 2 × 3 ${rectDiag(2, 3)} 똑같이 6칸! <mark>두 수를 바꾸어 곱해도 곱의 결과는 같습니다.</mark><br><b>결합법칙 🔀</b> (뒷면) 여러 수의 곱셈에서 순서를 바꾸어 계산해도 곱의 결과는 같습니다. 밑줄 그어진 두 수를 먼저 곱해보세요.`,
   encourage: "집중하는 내가 멋지다! 🖐",
-  example: EX(`3 × 6 = 6 × 3 = 18 &nbsp;&nbsp;|&nbsp;&nbsp; 2 × <u class="pair">2 × 5</u> = 2 × 10 = 20 &nbsp;&nbsp;|&nbsp;&nbsp; <span class="circ">20</span> × 5 = <span class="circ">2 × 10</span> × 5 = 10 × 10 = 100`),
-  page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;결합법칙&gt;</span> <u class="pair">2 × 3</u> × 4 = 6 × 4 = 24 &nbsp;|&nbsp; 2 × <u class="pair">3 × 4</u> = 2 × 12 = 24 &nbsp;|&nbsp; <span class="circ">20</span> × 5 = <span class="circ">2 × 10</span> × 5 = 10 × 10 = 100</div>`,
-  sortItems(list, page) {
-    if (page === 1) list.sort((x, y) => (x.t === "A" ? 0 : 1) - (y.t === "A" ? 0 : 1));
-    return list;
-  },
-  gen(rng, page) {
-    if (page === 0) return tryGen(rng, () => ({ t: "S", a: rngInt(rng, 2, 9), b: rngInt(rng, 2, 9) }), p => p.a !== p.b);
-    if (rng() < 0.6) {
-      if (rng() < 0.18) return { t: "A", a: 10, b: rngInt(rng, 2, 9), c: rngInt(rng, 2, 9), f: 0 };
-      return tryGen(rng, () => ({ t: "A", a: rngInt(rng, 2, 10), b: rngInt(rng, 2, 5), c: rngInt(rng, 2, 5), f: rng() < 0.5 ? 1 : 0 }),
-        p => p.b * p.c <= 20 && (!p.f || p.a * p.b <= 20));
+  example: EX(`<span class="red">&lt;교환법칙&gt;</span> 3 × 6 = 6 × 3 = 18 &nbsp;&nbsp;|&nbsp;&nbsp; 8 × 5 = 5 × 8 = 40 &nbsp;&nbsp;|&nbsp;&nbsp; 12 × 6 = 6 × 12 = 72`),
+  page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;결합법칙&gt;</span> <u class="pair">2 × 3</u> × 4 = 6 × 4 = 24 &nbsp;|&nbsp; 2 × <u class="pair">3 × 4</u> = 2 × 12 = 24 &nbsp;|&nbsp; <span class="circ">20</span> × 5 = <span class="circ">2 × 10</span> × 5 = 2 × 5 × 10 = 100</div>`,
+  keyOf(p) { return p.t === "B" ? `B${p.x * p.m}x${p.b}` : (p.t === "S" ? `S${Math.min(p.a, p.b)}x${Math.max(p.a, p.b)}` : `${p.a}x${p.b}x${p.c}`); },
+  gen(rng, page, idx) {
+    if (page === 0) {
+      if (idx >= 10) return { t: "S", a: rngPick(rng, [10, 11, 12, 15, 20, 25, 50, 100, 150, 200]), b: rngInt(rng, 2, 9) };
+      return tryGen(rng, () => ({ t: "S", a: rngInt(rng, 2, 9), b: rngInt(rng, 2, 9) }), p => p.a !== p.b);
     }
-    return { t: "B", x: rngInt(rng, 2, 9), b: rngInt(rng, 2, 9), m: rng() < 0.3 ? 100 : 10, sw: rng() < 0.4 ? 1 : 0 };
+    if (idx < 9) {
+      if (idx === 7 || idx === 8) return { t: "A", a: 10, b: rngInt(rng, 2, 9), c: rngInt(rng, 2, 9), f: 0 };
+      return tryGen(rng, () => ({ t: "A", a: rngInt(rng, 2, 9), b: rngInt(rng, 2, 5), c: rngInt(rng, 2, 5), f: idx % 2 }),
+        p => p.b * p.c <= 20 && (!p.f || p.a * p.b <= 20) && !(p.a === p.b && p.b === p.c));
+    }
+    return { t: "B", x: rngInt(rng, 2, 9), b: rngInt(rng, 2, 9), m: idx >= 12 ? 100 : 10, sw: idx % 2 };
   },
   render(p, show) {
     if (p.t === "S") return `<div class="prob-row">${p.a} × ${p.b} = ${SEG(show, `${p.b} × ${p.a} = ${p.a * p.b}`)}</div>`;
@@ -1189,7 +1208,7 @@ SHEETS.push({
       return `<div class="prob-row">${p.a} × <u class="pair">${p.b} × ${p.c}</u> = ${SEG(show, `${p.a} × ${p.b * p.c} = ${p.a * p.b * p.c}`)}</div>`;
     }
     if (p.sw) return `<div class="prob-row">${p.b} × ${p.x * p.m} = ${SEG(show, `${p.b} × ${p.x} × ${p.m} = ${p.b * p.x} × ${p.m} = ${p.x * p.b * p.m}`)}</div>`;
-    return `<div class="prob-row">${p.x * p.m} × ${p.b} = ${SEG(show, `${p.x} × ${p.m} × ${p.b} = ${p.x * p.b} × ${p.m} = ${p.x * p.b * p.m}`)}</div>`;
+    return `<div class="prob-row">${p.x * p.m} × ${p.b} = ${SEG(show, `${p.x} × ${p.m} × ${p.b} = ${p.x} × ${p.b} × ${p.m} = ${p.x * p.b} × ${p.m} = ${p.x * p.b * p.m}`)}</div>`;
   }
 });
 
@@ -1201,8 +1220,9 @@ SHEETS.push({
   encourage: "",
   example: EX(`<u class="pair">12</u> <span class="hl-y">× 5</span> = ( <u class="pair">10 + 2</u> ) <span class="hl-y">× 5</span> = ( 10 <span class="hl-y">× 5</span> ) + ( 2 <span class="hl-y">× 5</span> ) = 50 + 10 = 60`),
   page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;빼기 버전&gt;</span> <u class="pair">28</u> <span class="hl-y">× 4</span> = ( <u class="pair">30 − 2</u> ) <span class="hl-y">× 4</span> = ( 30 <span class="hl-y">× 4</span> ) − ( 2 <span class="hl-y">× 4</span> ) = 120 − 8 = 112</div>`,
+  keyOf(p) { return `${p.a}x${p.b}`; },
   gen(rng, page, idx) {
-    const bare = page === 0 ? idx >= 3 : idx >= 3;
+    const bare = idx >= 3;
     if (page === 0) return tryGen(rng, () => ({ m: 1, a: rngInt(rng, 12, 45), b: rngInt(rng, 2, 9), bare: bare ? 1 : 0 }),
       p => ones(p.a) >= 1 && ones(p.a) <= 6);
     return tryGen(rng, () => {
@@ -1211,7 +1231,7 @@ SHEETS.push({
     }, p => ones(p.a) >= 8);
   },
   render(p, show) {
-    const G = (v) => show ? AV(v) : "&nbsp;&nbsp;&nbsp;";
+    const G = (v) => show ? AV(v) : '<span class="blank-w"></span>';
     if (p.m === 1) {
       const A = tens(p.a) * 10, o = ones(p.a);
       if (p.bare) {
@@ -1326,7 +1346,7 @@ SHEETS.push({
 /* ── 나눗셈 1단계 ── */
 SHEETS.push({
   id: "d1_repsub", book: "나눗셈 1단계", cat: "md", layout: "rows",
-  title: "동수누감 同數累減 (같은 수를 반복하여 뺀다)", counts: [13, 15],
+  title: "동수누감 同數累減 (같은 수를 반복하여 뺀다)", counts: [13, 16],
   readAloud: "소리 내어 읽기 — 공부는 시작하면 일단 됩니다. 파이팅! ✨",
   principle: `<span style="font-size:8.5pt"><mark>같을 동(同)</mark> <mark>셈 수(數)</mark> <mark>거듭 누(累)</mark> <mark>덜 감(減)</mark></span><br><b>동수누감: 같은 수를 반복하여 빼는 것입니다. 나눗셈에서는 더 이상 뺄 수 없을 때까지 뺍니다.<br>몇 번 뺐는지가 나눗셈의 몫이 됩니다.</b> (뒷면) 곱셈을 활용해봅시다.`,
   encourage: "",
@@ -1343,7 +1363,7 @@ SHEETS.push({
   render(p, show, page) {
     const n = p.d * p.k;
     if (page === 0) {
-      const chain = show && p.k > 1 ? SEG(show, "− " + rep(p.d, p.k - 1, " − ")) : `<span style="display:inline-block;min-width:42mm"></span>`;
+      const chain = show && p.k > 1 ? SEG(show, "− " + rep(p.d, p.k - 1, " − ")) : `<span style="display:inline-block;min-width:${Math.max(42, (p.k - 1) * (p.d >= 10 ? 11 : 8))}mm"></span>`;
       return `<div class="prob-row">${n} − ${p.d} ${chain} &nbsp;=&nbsp; 0 &nbsp;&nbsp;<span class="sent">( ${BX(show, p.k)} 번 뺐습니다.)</span></div>`;
     }
     return `<div class="prob-row">${n} − ( ${p.d} × ${BX(show, p.k)} ) = 0 &nbsp;&nbsp;<span class="sent">( ${BX(show, n)} )에서 ( ${BX(show, p.d)} )을 ( ${BX(show, p.k)} )번 빼면 0이 됩니다.</span></div>`;
@@ -1352,7 +1372,7 @@ SHEETS.push({
 
 SHEETS.push({
   id: "d1_remainder", book: "나눗셈 1단계", cat: "md", layout: "rows",
-  title: "동수누감 나머지", counts: [13, 14],
+  title: "동수누감 나머지", counts: [13, 15],
   readAloud: "소리 내어 읽기 — 작은 노력들이 쌓이면 큰 기적이 됩니다. 오늘도 힘내자! 😆",
   principle: `같은 수를 반복해서 뺀 후에 <b>못 빼고 남은 수를 <mark>나머지</mark>라고 합니다.</b><br>곱셈을 활용해봅시다. <mark>*조건: 더 이상 뺄 수 없을 때까지 뺍니다. 나머지는 빼는 수보다 작습니다.</mark><br>나머지는 있을 수도 있고, 없을 수도 있습니다. 나머지가 0이면, 나누어 떨어진다. 나머지가 있으면, 나누어 떨어지지 않는다.`,
   encourage: "",
@@ -1362,7 +1382,7 @@ SHEETS.push({
     const bigPool = [10, 11, 12, 15, 20, 30];
     const big = page === 1 && idx >= 10;
     const d = big ? rngPick(rng, bigPool) : rngInt(rng, 2, 9);
-    const k = big ? rngInt(rng, 2, 6) : (rng() < 0.07 ? 1 : rngInt(rng, 2, 9));
+    const k = big ? rngInt(rng, 2, 6) : rngInt(rng, 2, 9);
     const r = page === 0 ? rngInt(rng, 1, d - 1) : rngInt(rng, 0, d - 1);
     if (d * k + r < 10) return { d, k: Math.max(k, Math.ceil(10 / d)), r };
     return { d, k, r };
@@ -1375,7 +1395,7 @@ SHEETS.push({
 
 SHEETS.push({
   id: "d1_divexpr", book: "나눗셈 1단계", cat: "md", layout: "rows",
-  title: "나눗셈식", counts: [13, 15],
+  title: "나눗셈식", counts: [14, 16],
   readAloud: "소리 내어 읽기 — 🌻 꾸준히 하면 모든 것을 이깁니다. 힘내요!",
   principle: `나눗셈 기호는 ÷ 이며 영어로 Obelus입니다. 나눗셈에는 몫과 나머지가 있습니다.<br>19−6−6−6 = 19 − (6×3) = 1 → 19에서 6을 <b>3번</b> 빼고 <b>1이 남았다</b>. → <mark>19 ÷ 6 = 3 …1 (몫)(나머지)</mark><br>나머지가 0이면, '나누어 떨어진다'고 합니다. 나머지가 0이면 …을 쓰지 않습니다.`,
   encourage: "",
@@ -1384,7 +1404,8 @@ SHEETS.push({
     const bigPool = [10, 11, 12, 15, 20];
     const big = page === 1 && idx >= 11;
     const d = big ? rngPick(rng, bigPool) : rngInt(rng, 2, 9);
-    let k = big ? rngInt(rng, 2, 6) : rngInt(rng, 2, 11);
+    const tenQ = page === 0 ? (idx === 6 || idx === 13) : (idx === 4 || idx === 9);
+    let k = big ? rngInt(rng, 2, 6) : (tenQ ? rngInt(rng, 10, 11) : rngInt(rng, 2, 9));
     const r = rngInt(rng, 0, d - 1);
     k = Math.min(k, Math.floor((99 - r) / d));
     if (d * k + r < 10) return { d, k: Math.max(k, Math.ceil(10 / d)), r };
@@ -1404,10 +1425,10 @@ SHEETS.push({
   principle: `나누는 수를 왼쪽에, 나뉘는 수를 오른쪽에 씁니다. 몇 번 뺄 수 있을지 생각해서 몫을 위에 씁니다.<br>곱을 적고 나뉘는 수에서 뺍니다. 나머지를 몫 옆에 <mark>…기호와 함께</mark> 씁니다.`,
   encourage: "",
   exampleProb: { n: 60, d: 7, q: 8, r: 4 },
-  gen(rng) {
+  gen(rng, page, idx) {
     return tryGen(rng, () => {
       const d = rngInt(rng, 2, 9);
-      const q = rng() < 0.08 ? 1 : rngInt(rng, 2, 9);
+      const q = idx === (page === 0 ? 10 : 12) ? 1 : rngInt(rng, 2, 9);
       const r = rngInt(rng, 0, d - 1);
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 10 && p.n <= 99);
@@ -1416,45 +1437,45 @@ SHEETS.push({
 });
 
 SHEETS.push({
-  id: "d2_q2_2d", cols: 2, gridClass: "cols2", book: "나눗셈 2단계", cat: "md", layout: "grid",
+  id: "d2_q2_2d", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 2단계", cat: "md", layout: "grid",
   title: "12÷3 몫이 두 자리", counts: [4, 6], blankCounts: [6, 6],
   readAloud: "소리 내어 읽기 🎇 자리에 바르게 앉는 순간 집중력이 폭발합니다! 파이팅!",
   principle: `<mark>세로셈은 몫의 높은 자리부터 자리를 맞추어 계산하는 방법입니다.</mark> *나머지가 나누는 수보다 작아야 합니다.<br>72에 5가 몇 번 들어가는가? 14라는 몫을 한 번에 구하기 어려우므로 (5×몇십)을 빼고 (5×몇)을 뺍니다.<br>72 − (5×10) − (5×4) = 2 — 반복해서 빼는 과정입니다. 몫과 나머지가 맞는지 <mark>검산식</mark>으로 확인합니다.`,
   encourage: "",
   exampleProb: { n: 72, d: 5, q: 14, r: 2 },
-  gen(rng) {
+  gen(rng, page, idx) {
     return tryGen(rng, () => {
-      const d = rngInt(rng, 2, 9);
+      const d = idx % 5 === 4 ? rngInt(rng, 8, 9) : rngInt(rng, 2, 7);
       const q = rngInt(rng, 10, Math.max(10, Math.floor(98 / d)));
       const r = rngInt(rng, 0, d - 1);
       return { d, q, r, n: d * q + r };
-    }, p => p.q >= 10 && p.q <= 99 && p.n <= 99 && p.n >= 10);
+    }, p => p.q >= 10 && p.q <= 99 && p.n <= 99 && p.n >= 10 && (p.d >= 8 || p.q % 10 !== 0));
   },
   render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 2, dense: true, fixedW: 2, fixedQ: 2, showQuot: true, stepHints: page === 0, notes: page === -1 }); }
 });
 
 SHEETS.push({
-  id: "d2_q2_3d", cols: 2, gridClass: "cols2", book: "나눗셈 2단계", cat: "md", layout: "grid",
+  id: "d2_q2_3d", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 2단계", cat: "md", layout: "grid",
   title: "123÷4 몫이 두 자리", counts: [4, 6], blankCounts: [6, 6],
   readAloud: "소리 내어 읽기 ⭐ 매일 성장하는 중입니다! 🌷",
   principle: `<mark>세로셈은 몫의 높은 자리부터 자리를 맞추어 계산하는 방법입니다.</mark><br>최대한 많이 빼기 위해 몇 십을 곱할지 예상해 봅시다. <mark>*나머지가 나누는 수보다 작아야 합니다.</mark><br>721÷9: 9를 80번 빼면 721−720=1. 더 이상 9를 뺄 수 없습니다. 나머지: 1`,
   encourage: "",
   exampleProb: { n: 289, d: 7, q: 41, r: 2 },
-  gen(rng) {
+  gen(rng, page, idx) {
     return tryGen(rng, () => {
       const d = rngInt(rng, 2, 9);
-      const roundTen = rng() < 0.2;
+      const roundTen = idx === 2;
       let q = rngInt(rng, Math.max(10, Math.ceil(100 / d)), Math.min(99, Math.floor(996 / d)));
       if (roundTen) q = Math.max(10, Math.floor(q / 10) * 10);
       const r = rngInt(rng, 0, d - 1);
       return { d, q, r, n: d * q + r };
-    }, p => p.q >= 10 && p.q <= 99 && p.n >= 100 && p.n <= 999);
+    }, p => p.q >= 10 && p.q <= 99 && p.n >= 100 && p.n <= 999 && (idx === 2 || p.q % 10 !== 0));
   },
   render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 2, showQuot: true, stepHints: page === 0, notes: page === -1 }); }
 });
 
 SHEETS.push({
-  id: "d2_q3", cols: 2, gridClass: "cols2", book: "나눗셈 2단계", cat: "md", layout: "grid",
+  id: "d2_q3", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 2단계", cat: "md", layout: "grid",
   title: "123÷4 몫이 세 자리", counts: [4, 6], blankCounts: [6, 6],
   readAloud: "소리 내어 읽기 — 책상 앞에서 빛나는 🌟 별! 그게 나야!",
   principle: `나누는 수에 몇 백을 곱해서 뺄 지 예상해봅시다.<br>796÷3: (3×200)을 빼고, (3×60)을 빼고, (3×5)를 뺍니다. 몫: 200+60+5 = 265, 나머지 1`,
@@ -1468,11 +1489,11 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.q >= 100 && p.q <= 999 && !String(p.q).includes("0") && p.n <= 999 && p.n >= 100);
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 3, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 3, showQuot: true, notes: page === -1 }); }
 });
 
 SHEETS.push({
-  id: "d2_q3_zero", cols: 2, gridClass: "cols2", book: "나눗셈 2단계", cat: "md", layout: "grid",
+  id: "d2_q3_zero", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 2단계", cat: "md", layout: "grid",
   title: "123÷4 몫이 세 자리 업그레이드", counts: [4, 6], blankCounts: [6, 6],
   readAloud: "소리 내어 읽기 — 오늘도 멋지게 도전해보자! 😀",
   principle: `곱과 뺄셈을 정확히 계산하며 풀어봅시다.<br>409÷4 = 102 …1 — 내린 수가 나누는 수보다 작으면 <mark>몫에 0을 씁니다.</mark> 검산식: (4×102) + 1 = 408 + 1 = 409`,
@@ -1493,21 +1514,21 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.q >= 100 && p.q <= 999 && p.n <= 999 && p.n >= 100);
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 3, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 3, showQuot: true, notes: page === -1 }); }
 });
 
 /* ── 나눗셈 3단계 (두 자리 수로 나누기) ── */
 SHEETS.push({
-  id: "d3_2d2d", cols: 2, gridClass: "cols2", book: "나눗셈 3단계", cat: "md", layout: "grid",
+  id: "d3_2d2d", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 3단계", cat: "md", layout: "grid",
   title: "12÷34 몫이 한 자리", counts: [4, 8], blankCounts: [8, 8],
   readAloud: "소리 내어 읽기 💪 지금부터 멋진 수학이 펼쳐진다. 파이팅!",
   principle: `두 자리 수로 나누어 봅시다. 곱의 계산이 복잡해집니다. 충분히 연습했으니 <mark>검산식</mark>을 직접 써 봅시다.<br>93÷26 = 3 …15, 검산식: (26×3) + 15 = 78 + 15 = 93`,
   encourage: "",
   exampleProb: { n: 93, d: 26, q: 3, r: 15 },
-  gen(rng) {
+  gen(rng, page, idx) {
     return tryGen(rng, () => {
       const d = rngInt(rng, 12, 39);
-      const q = rng() < 0.12 ? 1 : rngInt(rng, 2, Math.max(2, Math.floor(97 / d)));
+      const q = idx === (page === 0 ? 3 : 7) ? 1 : rngInt(rng, 2, Math.max(2, Math.floor(97 / d)));
       const r = rngInt(rng, 0, Math.min(d - 1, 99 - d * q));
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 10 && p.n <= 99 && p.q >= 1 && p.q <= 9 && p.r < p.d && p.d % 10 !== 0);
@@ -1516,7 +1537,7 @@ SHEETS.push({
 });
 
 SHEETS.push({
-  id: "d3_3d2d_q1", cols: 2, gridClass: "cols2", book: "나눗셈 3단계", cat: "md", layout: "grid",
+  id: "d3_3d2d_q1", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 3단계", cat: "md", layout: "grid",
   title: "123÷45 몫이 한 자리", counts: [4, 8], blankCounts: [8, 8],
   readAloud: "소리 내어 읽기 🎆 작은 시작이 큰 기적을 만듭니다. 기적을 만들어보자!",
   principle: `두 자리 수로 나누어 봅시다. 곱의 계산이 복잡해집니다.<br>654÷83 = 7 …73, 검산식: (83×7) + 73 = 581 + 73 = 654`,
@@ -1531,45 +1552,45 @@ SHEETS.push({
       const q = rngInt(rng, lo, hi);
       const r = rngInt(rng, 0, d - 1);
       return { d, q, r, n: d * q + r };
-    }, p => p.n >= 100 && p.n <= 999 && p.q >= 2 && p.q <= 9 && p.r < p.d);
+    }, p => p.n >= 100 && p.n <= 999 && p.q >= 2 && p.q <= 9 && p.r < p.d && p.d % 10 !== 0);
   },
   render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense: true, fixedW: 3, fixedQ: 1, notes: page === -1 }); }
 });
 
 SHEETS.push({
-  id: "d3_3d2d_q2", cols: 2, gridClass: "cols2", book: "나눗셈 3단계", cat: "md", layout: "grid",
+  id: "d3_3d2d_q2", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 3단계", cat: "md", layout: "grid",
   title: "123÷45 몫이 두 자리", counts: [4, 6], blankCounts: [6, 6],
   readAloud: "소리 내어 읽기 😊 수학 천재는 아무도 모르게 만들어진다. 지금부터. 😗",
   principle: `두 자리 수로 나누어 봅시다. 나눗셈식을 보고 세로셈에 적어서 해결해보세요.<br>955÷29: (29×30)을 빼고 (29×2)를 뺍니다. 몫: 30+2 = 32, 나머지 27`,
   encourage: "",
   exampleProb: { n: 955, d: 29, q: 32, r: 27 },
-  gen(rng) {
+  gen(rng, page, idx) {
     return tryGen(rng, () => {
       const d = rngInt(rng, 12, 67);
       const q = rngInt(rng, 10, Math.max(10, Math.min(83, Math.floor(996 / d))));
       const r = rngInt(rng, 0, Math.min(d - 1, 999 - d * q));
       return { d, q, r, n: d * q + r };
-    }, p => p.n >= 100 && p.n <= 999 && p.q >= 10 && p.q <= 99 && p.r < p.d && p.r >= 0 && p.d % 10 !== 0);
+    }, p => p.n >= 100 && p.n <= 999 && p.q >= 10 && p.q <= 99 && p.r < p.d && p.r >= 0 && p.d % 10 !== 0 && (idx === 3 || p.q % 10 !== 0));
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, miniParts: 2, dense2: true, fixedW: 3, fixedQ: 2, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, miniParts: 2, dense2: true, fixedW: 3, fixedQ: 2, showQuot: true, notes: page === -1 }); }
 });
 
 SHEETS.push({
-  id: "d3_4d2d", cols: 2, gridClass: "cols2", book: "나눗셈 3단계", cat: "md", layout: "grid",
-  title: "1234÷56 몫이 두 자리 이상", counts: [2, 6], blankCounts: [6, 6],
+  id: "d3_4d2d", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 3단계", cat: "md", layout: "grid",
+  title: "1234÷56 몫이 두 자리 이상", counts: [4, 6], blankCounts: [6, 6],
   readAloud: "소리 내어 읽기 — 나는 수학 히어로다! 🎉",
   principle: `최종단계에 이르렀습니다. 차분한 마음으로 세로셈과 검산식, 곱셈을 정확히 계산해보세요.<br>5025÷14: (14×300), (14×50), (14×8)을 차례로 뺍니다. 몫: 300+50+8 = 358, 나머지 13`,
   encourage: "",
   exampleProb: { n: 5025, d: 14, q: 358, r: 13 },
-  gen(rng) {
+  gen(rng, page, idx) {
     return tryGen(rng, () => {
       const d = rngInt(rng, 11, 53);
       const q = rngInt(rng, Math.max(100, Math.ceil(1001 / d)), Math.floor(9989 / d));
       const r = rngInt(rng, 0, Math.min(d - 1, 9999 - d * q));
       return { d, q, r, n: d * q + r };
-    }, p => p.n >= 1000 && p.n <= 9999 && p.q >= 10 && p.r < p.d && p.r >= 0);
+    }, p => p.n >= 1000 && p.n <= 9999 && p.q >= 10 && p.r < p.d && p.r >= 0 && p.d % 10 !== 0 && (idx === 2 || !String(p.q).includes("0")));
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 4, miniParts: 3, dense2: true, fixedW: 4, fixedQ: 3, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: page !== -1, miniW: 4, miniParts: 3, dense2: true, fixedW: 4, fixedQ: 3, showQuot: true, notes: page === -1 }); }
 });
 
 /* ── 빈 학습지 (줄 노트) ── */
@@ -1589,18 +1610,16 @@ SHEETS.push({
 /* ══════════ 화면 구성 ══════════ */
 let state = { si: 0, seed: 260808, show: false, blank: false };
 
-/* 페이지별 문제 생성 — 페이지 내 중복 금지, 앞·뒷면 교차 중복 금지(sharedSeen), 반복 허용 시트는 2회 제한 */
+/* 페이지별 문제 생성 — 페이지 내 중복 금지, 앞·뒷면 교차 중복 금지(sharedSeen; pageUnique 시트는 면별), 시트 id 해시로 시트마다 다른 수열 */
 function genUnique(sheet, seed, page, sharedSeen, countOverride) {
   const count = countOverride !== undefined ? countOverride : sheet.counts[page];
-  const out = []; const seen = sharedSeen || new Set(); const cnt = new Map(); let salt = 0;
+  const out = []; const seen = (sheet.pageUnique || !sharedSeen) ? new Set() : sharedSeen; let salt = 0;
+  let sh = 0; for (let i = 0; i < sheet.id.length; i++) sh = (sh * 31 + sheet.id.charCodeAt(i)) | 0;
   while (out.length < count && salt < count * 60) {
-    const rng = mulberry32(seed * 7919 + page * 524287 + out.length * 104729 + salt * 31);
+    const rng = mulberry32(seed * 7919 + page * 524287 + out.length * 104729 + salt * 31 + sh);
     const p = sheet.gen(rng, page, out.length);
-    const key = JSON.stringify(p);
-    if (sheet.allowRepeat) {
-      const c = cnt.get(key) || 0;
-      if (c < 2) { cnt.set(key, c + 1); out.push(p); }
-    } else if (!seen.has(key)) { seen.add(key); out.push(p); }
+    const key = sheet.keyOf ? sheet.keyOf(p) : JSON.stringify(p);
+    if (!seen.has(key)) { seen.add(key); out.push(p); }
     salt++;
   }
   return sheet.sortItems ? sheet.sortItems(out, page) : out;
