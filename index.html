@@ -472,7 +472,7 @@ function vmulMini(x, y, show, blank, opts) {
   }
   const prod = x * y, W = opts.fixedW || ndig(prod);
   const m = show ? "ans" : "hidden";
-  let h = row("", numCells(x, W, "given")) + row("×", numCells(show ? y : null, W, m));
+  let h = row("", numCells(show ? x : null, W, m)) + row("×", numCells(show ? y : null, W, m));
   const digs = String(y).split("").map(Number).reverse();
   const nz = digs.filter(d => d > 0).length;
   if (x >= 10 && y >= 10 && nz >= 2) {
@@ -1056,6 +1056,8 @@ SHEETS.push({
   principle: `<span style="font-size:8.5pt"><mark>같을 동(同)</mark> <mark>셈 수(數)</mark> <mark>거듭 누(累)</mark> <mark>더할 가(加)</mark></span><br><b>동수누가: 곱셈은 같은 수를 반복하여 더하는 것입니다.</b><br>4 곱하기 5는 4를 5번 더한다는 뜻입니다. 4 × 5는 4 + 4 + 4 + 4 + 4와 같습니다. 곱셈을 덧셈으로, 덧셈을 곱셈으로 바꾸어 써 봅시다.`,
   encourage: "티끌 모아 태산 🐢 하루의 작은 공부가 모여, 높은 실력이 완성됩니다.",
   example: EX(`2 × 3 = 2 + 2 + 2 = 6 &nbsp;&nbsp;|&nbsp;&nbsp; 12 + 12 + 12 = 12 × 3 = 36`),
+  pageUnique: true,
+  keyOf(p) { return p.a >= 10 ? `B${p.a}` : `${p.a}x${p.b}`; },
   sortItems(list) {
     return list.sort((x, y) => (x.a >= 10 ? 1 : 0) - (y.a >= 10 ? 1 : 0));
   },
@@ -1082,6 +1084,8 @@ SHEETS.push({
   principle: `같은 수의 덧셈을 이용해서 곱셈을 바꿀 수 있어요.<br>가르기 방법) 8 = 4 + 4로, 9 = 3 + 3 + 3으로 바꿀 수 있습니다.<br>모으기·바꾸기 방법) 3 + 3 = 2 + 2 + 2 → 3을 2번 더한 것과 2를 3번 더한 것은 같습니다. ｡^‿^｡ 해보자, 해내자!`,
   encourage: "",
   example: EX(`8 × 5 = 8 + 8 + 8 + 8 + 8 = 4+4+4+4+4+4+4+4+4+4 = 4 × 10 = 40`),
+  pageUnique: true,
+  keyOf(p) { return `${p.a}`; },
   gen(rng, page) {
     if (page === 0) {
       return tryGen(rng, () => {
@@ -1111,10 +1115,11 @@ SHEETS.push({
   principle: `덧셈과 뺄셈을 이용해서 완전히 다른 모습의 곱셈으로 바꿀 수 있어요. 여러분의 실력을 가득 채우세요. 💯`,
   encourage: "",
   example: EX(`12 × 3 = 12 + 12 + 12<br>= 10+2 &nbsp;+&nbsp; 10+2 &nbsp;+&nbsp; 10+2<br>= 10+10+10 &nbsp;+&nbsp; 2+2+2<br>= 10 × 3 &nbsp;+&nbsp; 2 × 3<br>= 30 + 6 &nbsp;=&nbsp; 36`),
+  keyOf(p) { return `${p.a}`; },
   gen(rng, page, idx) {
-    if (page === 0) return tryGen(rng, () => ({ a: rngInt(rng, 11, 29), b: rngInt(rng, 3, 5) }), p => ones(p.a) >= 1);
+    if (page === 0) return tryGen(rng, () => ({ a: rngInt(rng, 11, 29), b: rngInt(rng, 3, 5) }), p => ones(p.a) >= 1 && ones(p.a) <= 6);
     if (idx >= 1) return { a: rngPick(rng, [110, 120, 130, 210, 220, 105, 204, 302, 405]), b: rngInt(rng, 3, 5) };
-    return tryGen(rng, () => ({ a: rngInt(rng, 31, 59), b: rngInt(rng, 3, 5) }), p => ones(p.a) >= 1);
+    return tryGen(rng, () => ({ a: rngInt(rng, 31, 59), b: rngInt(rng, 3, 5) }), p => ones(p.a) >= 1 && ones(p.a) <= 6);
   },
   render(p, show) {
     const parts = divParts(p.a);
@@ -1134,6 +1139,7 @@ SHEETS.push({
   principle: `덧셈과 뺄셈을 이용해서 완전히 다른 모습의 곱셈으로 바꿀 수 있어요.<br>잘하는 사람이 이기는 것이 아니라 🚩 끝까지 해낸 사람이 이깁니다.`,
   encourage: "",
   example: EX(`29 × 4 = 29 + 29 + 29 + 29<br>= 30−1 &nbsp;+&nbsp; 30−1 &nbsp;+&nbsp; 30−1 &nbsp;+&nbsp; 30−1<br>= 30+30+30+30 &nbsp;−&nbsp; 1−1−1−1<br>= 30 × 4 &nbsp;−&nbsp; 1 × 4<br>= 120 − 4 &nbsp;=&nbsp; 116`),
+  keyOf(p) { return `${p.a}`; },
   gen(rng, page, idx) {
     return tryGen(rng, () => {
       const big = page === 1 && idx >= 1;
@@ -1172,8 +1178,9 @@ SHEETS.push({
   encourage: "",
   example: "",
   gen(rng) {
-    const zeroOne = rng() < 0.15;
-    return tryGen(rng, () => ({ a: zeroOne ? rngPick(rng, [0, 1]) : rngInt(rng, 2, 9), b: rngInt(rng, 0, 9) }), p => p.a + p.b > 0);
+    const zeroOne = rng() < 0.12;
+    const side = rng() < 0.5;
+    return tryGen(rng, () => ({ a: zeroOne && side ? rngPick(rng, [0, 1]) : rngInt(rng, 2, 9), b: zeroOne && !side ? rngPick(rng, [0, 1]) : rngInt(rng, 2, 9) }), p => p.a + p.b > 0);
   },
   render(p, show) {
     return `<div class="prob-row">${p.a} × ${p.b} = ${SEG(show, p.a * p.b)}</div>`;
@@ -1195,7 +1202,7 @@ SHEETS.push({
       return tryGen(rng, () => ({ t: "S", a: rngInt(rng, 2, 9), b: rngInt(rng, 2, 9) }), p => p.a !== p.b);
     }
     if (idx < 9) {
-      if (idx === 7 || idx === 8) return { t: "A", a: 10, b: rngInt(rng, 2, 9), c: rngInt(rng, 2, 9), f: 0 };
+      if (idx === 7 || idx === 8) return tryGen(rng, () => ({ t: "A", a: 10, b: rngInt(rng, 2, 9), c: rngInt(rng, 2, 9), f: 0 }), p => p.b * p.c <= 20);
       return tryGen(rng, () => ({ t: "A", a: rngInt(rng, 2, 9), b: rngInt(rng, 2, 5), c: rngInt(rng, 2, 5), f: idx % 2 }),
         p => p.b * p.c <= 20 && (!p.f || p.a * p.b <= 20) && !(p.a === p.b && p.b === p.c));
     }
@@ -1220,7 +1227,7 @@ SHEETS.push({
   encourage: "",
   example: EX(`<u class="pair">12</u> <span class="hl-y">× 5</span> = ( <u class="pair">10 + 2</u> ) <span class="hl-y">× 5</span> = ( 10 <span class="hl-y">× 5</span> ) + ( 2 <span class="hl-y">× 5</span> ) = 50 + 10 = 60`),
   page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;빼기 버전&gt;</span> <u class="pair">28</u> <span class="hl-y">× 4</span> = ( <u class="pair">30 − 2</u> ) <span class="hl-y">× 4</span> = ( 30 <span class="hl-y">× 4</span> ) − ( 2 <span class="hl-y">× 4</span> ) = 120 − 8 = 112</div>`,
-  keyOf(p) { return `${p.a}x${p.b}`; },
+  keyOf(p) { return `${p.a}`; },
   gen(rng, page, idx) {
     const bare = idx >= 3;
     if (page === 0) return tryGen(rng, () => ({ m: 1, a: rngInt(rng, 12, 45), b: rngInt(rng, 2, 9), bare: bare ? 1 : 0 }),
@@ -1345,7 +1352,7 @@ SHEETS.push({
 
 /* ── 나눗셈 1단계 ── */
 SHEETS.push({
-  id: "d1_repsub", book: "나눗셈 1단계", cat: "md", layout: "rows",
+  id: "d1_repsub", pageUnique: true, keyOf(p) { return p.d >= 10 ? `B${p.d}` : `${p.d}x${p.k}`; }, book: "나눗셈 1단계", cat: "md", layout: "rows",
   title: "동수누감 同數累減 (같은 수를 반복하여 뺀다)", counts: [13, 16],
   readAloud: "소리 내어 읽기 — 공부는 시작하면 일단 됩니다. 파이팅! ✨",
   principle: `<span style="font-size:8.5pt"><mark>같을 동(同)</mark> <mark>셈 수(數)</mark> <mark>거듭 누(累)</mark> <mark>덜 감(減)</mark></span><br><b>동수누감: 같은 수를 반복하여 빼는 것입니다. 나눗셈에서는 더 이상 뺄 수 없을 때까지 뺍니다.<br>몇 번 뺐는지가 나눗셈의 몫이 됩니다.</b> (뒷면) 곱셈을 활용해봅시다.`,
@@ -1354,24 +1361,24 @@ SHEETS.push({
   gen(rng, page, idx) {
     const big = page === 0 ? idx >= 9 : idx >= 10;
     return tryGen(rng, () => {
-      const bigPool = [10, 11, 12, 15, 20, 30, 33, 40, 50];
+      const bigPool = page === 0 ? [10, 11, 12, 15, 20, 30, 33, 40, 50] : [10, 11, 12, 15, 20, 30, 33, 40];
       const d = big ? rngPick(rng, bigPool) : rngInt(rng, 2, 9);
       const k = big ? rngInt(rng, 2, 7) : rngInt(rng, 2, 8);
       return { d, k };
-    }, p => p.d * p.k >= 10);
+    }, p => p.d * p.k >= 10 && (p.d === 50 || p.d * p.k <= 99));
   },
   render(p, show, page) {
     const n = p.d * p.k;
     if (page === 0) {
-      const chain = show && p.k > 1 ? SEG(show, "− " + rep(p.d, p.k - 1, " − ")) : `<span style="display:inline-block;min-width:${Math.max(42, (p.k - 1) * (p.d >= 10 ? 11 : 8))}mm"></span>`;
-      return `<div class="prob-row">${n} − ${p.d} ${chain} &nbsp;=&nbsp; 0 &nbsp;&nbsp;<span class="sent">( ${BX(show, p.k)} 번 뺐습니다.)</span></div>`;
+      const chain = show && p.k > 1 ? SEG(show, "− " + rep(p.d, p.k - 1, " − ")) : `<span style="display:inline-block;min-width:64mm"></span>`;
+      return `<div class="prob-row"><span style="display:inline-block;min-width:${show ? 0 : 24}mm">${n} − ${p.d}</span> ${chain} &nbsp;=&nbsp; 0 &nbsp;&nbsp;<span class="sent">( ${BX(show, p.k)} 번 뺐습니다.)</span></div>`;
     }
     return `<div class="prob-row">${n} − ( ${p.d} × ${BX(show, p.k)} ) = 0 &nbsp;&nbsp;<span class="sent">( ${BX(show, n)} )에서 ( ${BX(show, p.d)} )을 ( ${BX(show, p.k)} )번 빼면 0이 됩니다.</span></div>`;
   }
 });
 
 SHEETS.push({
-  id: "d1_remainder", book: "나눗셈 1단계", cat: "md", layout: "rows",
+  id: "d1_remainder", keyOf(p) { return `${p.d}x${p.k}`; }, book: "나눗셈 1단계", cat: "md", layout: "rows",
   title: "동수누감 나머지", counts: [13, 15],
   readAloud: "소리 내어 읽기 — 작은 노력들이 쌓이면 큰 기적이 됩니다. 오늘도 힘내자! 😆",
   principle: `같은 수를 반복해서 뺀 후에 <b>못 빼고 남은 수를 <mark>나머지</mark>라고 합니다.</b><br>곱셈을 활용해봅시다. <mark>*조건: 더 이상 뺄 수 없을 때까지 뺍니다. 나머지는 빼는 수보다 작습니다.</mark><br>나머지는 있을 수도 있고, 없을 수도 있습니다. 나머지가 0이면, 나누어 떨어진다. 나머지가 있으면, 나누어 떨어지지 않는다.`,
@@ -1382,8 +1389,9 @@ SHEETS.push({
     const bigPool = [10, 11, 12, 15, 20, 30];
     const big = page === 1 && idx >= 10;
     const d = big ? rngPick(rng, bigPool) : rngInt(rng, 2, 9);
-    const k = big ? rngInt(rng, 2, 6) : rngInt(rng, 2, 9);
+    let k = big ? rngInt(rng, 2, 6) : rngInt(rng, 2, 9);
     const r = page === 0 ? rngInt(rng, 1, d - 1) : rngInt(rng, 0, d - 1);
+    k = Math.min(k, Math.floor((99 - r) / d));
     if (d * k + r < 10) return { d, k: Math.max(k, Math.ceil(10 / d)), r };
     return { d, k, r };
   },
@@ -1394,7 +1402,7 @@ SHEETS.push({
 });
 
 SHEETS.push({
-  id: "d1_divexpr", book: "나눗셈 1단계", cat: "md", layout: "rows",
+  id: "d1_divexpr", keyOf(p) { return `${p.d}x${p.k}`; }, book: "나눗셈 1단계", cat: "md", layout: "rows",
   title: "나눗셈식", counts: [14, 16],
   readAloud: "소리 내어 읽기 — 🌻 꾸준히 하면 모든 것을 이깁니다. 힘내요!",
   principle: `나눗셈 기호는 ÷ 이며 영어로 Obelus입니다. 나눗셈에는 몫과 나머지가 있습니다.<br>19−6−6−6 = 19 − (6×3) = 1 → 19에서 6을 <b>3번</b> 빼고 <b>1이 남았다</b>. → <mark>19 ÷ 6 = 3 …1 (몫)(나머지)</mark><br>나머지가 0이면, '나누어 떨어진다'고 합니다. 나머지가 0이면 …을 쓰지 않습니다.`,
@@ -1419,7 +1427,7 @@ SHEETS.push({
 
 /* ── 나눗셈 2단계 (세로셈, 몫 자릿수 단계별) ── */
 SHEETS.push({
-  id: "d2_q1", cols: 4, book: "나눗셈 2단계", cat: "md", layout: "grid",
+  id: "d2_q1", cols: 4, keyOf(p) { return p.q === 1 ? `q1_${p.d}_${p.n}` : `${p.n}`; }, book: "나눗셈 2단계", cat: "md", layout: "grid",
   title: "12÷3 몫이 한 자리", counts: [20, 24],
   readAloud: "소리 내어 읽기 🏆 오늘도 최고의 모습으로 해내자!",
   principle: `나누는 수를 왼쪽에, 나뉘는 수를 오른쪽에 씁니다. 몇 번 뺄 수 있을지 생각해서 몫을 위에 씁니다.<br>곱을 적고 나뉘는 수에서 뺍니다. 나머지를 몫 옆에 <mark>…기호와 함께</mark> 씁니다.`,
@@ -1445,11 +1453,11 @@ SHEETS.push({
   exampleProb: { n: 72, d: 5, q: 14, r: 2 },
   gen(rng, page, idx) {
     return tryGen(rng, () => {
-      const d = idx % 5 === 4 ? rngInt(rng, 8, 9) : rngInt(rng, 2, 7);
-      const q = rngInt(rng, 10, Math.max(10, Math.floor(98 / d)));
+      const d = rngPick(rng, [2, 2, 3, 3, 4, 4, 5, 6, 7]);
+      const q = rngInt(rng, 11, Math.max(11, Math.floor(98 / d)));
       const r = rngInt(rng, 0, d - 1);
       return { d, q, r, n: d * q + r };
-    }, p => p.q >= 10 && p.q <= 99 && p.n <= 99 && p.n >= 10 && (p.d >= 8 || p.q % 10 !== 0));
+    }, p => p.q >= 11 && p.q <= 99 && p.n <= 99 && p.n >= 10 && p.q % 10 !== 0);
   },
   render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 2, dense: true, fixedW: 2, fixedQ: 2, showQuot: true, stepHints: page === 0, notes: page === -1 }); }
 });
@@ -1506,7 +1514,7 @@ SHEETS.push({
       let q;
       if (withZero) {
         const h = rngInt(rng, 1, Math.max(1, Math.floor(996 / d / 100)));
-        q = rng() < 0.7 ? h * 100 + rngInt(rng, 0, 9) : h * 100 + rngInt(rng, 1, 9) * 10;
+        q = h * 100 + rngInt(rng, 1, 9);
       } else {
         q = genNoZero(rng, 112, Math.max(112, Math.floor(996 / Math.max(d, 2))));
       }
@@ -1527,8 +1535,8 @@ SHEETS.push({
   exampleProb: { n: 93, d: 26, q: 3, r: 15 },
   gen(rng, page, idx) {
     return tryGen(rng, () => {
-      const d = rngInt(rng, 12, 39);
-      const q = idx === (page === 0 ? 3 : 7) ? 1 : rngInt(rng, 2, Math.max(2, Math.floor(97 / d)));
+      const q = idx === (page === 0 ? 3 : 7) ? 1 : rngInt(rng, 2, 7);
+      const d = rngInt(rng, 12, Math.min(39, Math.floor(97 / q)));
       const r = rngInt(rng, 0, Math.min(d - 1, 99 - d * q));
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 10 && p.n <= 99 && p.q >= 1 && p.q <= 9 && p.r < p.d && p.d % 10 !== 0);
@@ -1545,11 +1553,8 @@ SHEETS.push({
   exampleProb: { n: 654, d: 83, q: 7, r: 73 },
   gen(rng, page) {
     return tryGen(rng, () => {
-      const d = rngInt(rng, 13, page === 0 ? 39 : 89);
-      const lo = Math.max(2, Math.ceil(101 / d));
-      const hi = Math.min(9, Math.floor(998 / d));
-      if (lo > hi) return { d, q: 2, r: 0, n: d * 2 };
-      const q = rngInt(rng, lo, hi);
+      const q = page === 0 ? rngInt(rng, 3, 9) : rngInt(rng, 2, 9);
+      const d = rngInt(rng, Math.max(13, Math.ceil(101 / q)), Math.min(page === 0 ? 39 : 89, Math.floor(998 / q)));
       const r = rngInt(rng, 0, d - 1);
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 100 && p.n <= 999 && p.q >= 2 && p.q <= 9 && p.r < p.d && p.d % 10 !== 0);
@@ -1566,8 +1571,8 @@ SHEETS.push({
   exampleProb: { n: 955, d: 29, q: 32, r: 27 },
   gen(rng, page, idx) {
     return tryGen(rng, () => {
-      const d = rngInt(rng, 12, 67);
-      const q = rngInt(rng, 10, Math.max(10, Math.min(83, Math.floor(996 / d))));
+      const q = rngInt(rng, 11, 79);
+      const d = rngInt(rng, Math.max(12, Math.ceil(100 / q)), Math.min(67, Math.floor(996 / q)));
       const r = rngInt(rng, 0, Math.min(d - 1, 999 - d * q));
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 100 && p.n <= 999 && p.q >= 10 && p.q <= 99 && p.r < p.d && p.r >= 0 && p.d % 10 !== 0 && (idx === 3 || p.q % 10 !== 0));
