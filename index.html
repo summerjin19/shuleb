@@ -1177,10 +1177,19 @@ SHEETS.push({
   principle: `구구단을 잘 외웠나요? 빠르고 정확하게 문제를 해결해봅시다. 🚀<br>다 푸는 데 걸린 시간을 재 보세요. ⏳ (&nbsp;&nbsp;&nbsp;&nbsp;) 분 (&nbsp;&nbsp;&nbsp;&nbsp;) 초`,
   encourage: "",
   example: "",
-  gen(rng) {
-    const zeroOne = rng() < 0.12;
-    const side = rng() < 0.5;
-    return tryGen(rng, () => ({ a: zeroOne && side ? rngPick(rng, [0, 1]) : rngInt(rng, 2, 9), b: zeroOne && !side ? rngPick(rng, [0, 1]) : rngInt(rng, 2, 9) }), p => p.a + p.b > 0);
+  /* 앞·뒷면 합쳐 ×0 문제 1개, ×1 문제 1개만 — 위치는 시드로 결정 */
+  gen(rng, page, idx, seed) {
+    const total = this.counts[0] + this.counts[1];
+    const slotRng = mulberry32(seed * 7919 + 424243);
+    const zeroPos = rngInt(slotRng, 0, total - 1);
+    let onePos = rngInt(slotRng, 0, total - 2);
+    if (onePos >= zeroPos) onePos++;
+    const pos = page * this.counts[0] + idx;
+    if (pos === zeroPos || pos === onePos) {
+      const k = pos === zeroPos ? 0 : 1, n = rngInt(rng, 2, 9);
+      return rng() < 0.5 ? { a: k, b: n } : { a: n, b: k };
+    }
+    return { a: rngInt(rng, 2, 9), b: rngInt(rng, 2, 9) };
   },
   render(p, show) {
     return `<div class="prob-row">${p.a} × ${p.b} = ${SEG(show, p.a * p.b)}</div>`;
@@ -1622,7 +1631,7 @@ function genUnique(sheet, seed, page, sharedSeen, countOverride) {
   let sh = 0; for (let i = 0; i < sheet.id.length; i++) sh = (sh * 31 + sheet.id.charCodeAt(i)) | 0;
   while (out.length < count && salt < count * 60) {
     const rng = mulberry32(seed * 7919 + page * 524287 + out.length * 104729 + salt * 31 + sh);
-    const p = sheet.gen(rng, page, out.length);
+    const p = sheet.gen(rng, page, out.length, seed);
     const key = sheet.keyOf ? sheet.keyOf(p) : JSON.stringify(p);
     if (!seen.has(key)) { seen.add(key); out.push(p); }
     salt++;
