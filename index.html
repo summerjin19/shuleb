@@ -1643,12 +1643,13 @@ function gcFlush() {
     gcTimer = setTimeout(function () { gcTimer = null; gcFlush(); }, 500);
   }
 }
-/* 우상단 누적 조회수 표시 — 카운터 조회 실패 시 배지 숨김 유지 */
-function gcShowTotal() {
+/* 우상단 누적 조회수 표시 — 아직 집계 전이면 몇 초 간격으로 재시도 */
+function gcShowTotal(tries) {
+  if (tries === undefined) tries = 5;
   fetch("https://shuleb.goatcounter.com/counter//home.json")
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
-      if (!d) return;
+      if (!d) { if (tries > 0) setTimeout(function () { gcShowTotal(tries - 1); }, 4000); return; }
       const n = parseInt(String(d.count).replace(/\D/g, ""), 10);
       if (isNaN(n)) return;
       document.getElementById("viewNum").textContent = n.toLocaleString("ko-KR");
