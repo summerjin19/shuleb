@@ -26,6 +26,8 @@
   .toolbar .code-chip { margin-left:auto; font-family:ui-monospace,monospace; font-size:13px;
     background:var(--mint); border-radius:10px; padding:6px 10px; cursor:pointer; }
   .toolbar .code-chip:hover { background:var(--mint-dark); color:#fff; }
+  .toolbar .views { font-size:12px; color:#8a9aa5; white-space:nowrap; margin-left:2px; }
+  .toolbar .views b { color:var(--mint-deep); font-weight:800; }
 
   .sheet { width:210mm; height:296mm; margin:14px auto; padding:10mm 11mm 9mm;
     background:#fff; box-shadow:0 2px 14px rgba(0,0,0,.12); position:relative;
@@ -162,6 +164,7 @@
   <label class="chk" id="blankWrap" style="display:none"><input type="checkbox" id="chkBlank"> 빈 연습지</label>
   <button id="btnPrint">인쇄 (앞·뒤 2쪽)</button>
   <span class="code-chip" id="codeChip" title="클릭하면 번호를 입력해 같은 문제지·정답지를 다시 볼 수 있어요">문제지 번호: <b id="sheetCode"></b> 🔍</span>
+  <span class="views" id="views" style="display:none" title="누적 조회수">👀 <b id="viewNum"></b></span>
 </div>
 
 <div id="pages"></div>
@@ -1624,6 +1627,36 @@ SHEETS.push({
 /* ══════════ 화면 구성 ══════════ */
 let state = { si: 0, seed: 260808, show: false, blank: false };
 
+/* GoatCounter 조회수 — 사이트 전체는 /home, 학습지별은 /s/{id} 경로로 집계(대시보드 전용) */
+window.goatcounter = { no_onload: true };
+const GC_QUEUE = [];
+let gcTimer = null, gcTries = 0, lastCountedSi = -1;
+function gcCount(path, title) {
+  GC_QUEUE.push({ path: path, title: title });
+  gcFlush();
+}
+function gcFlush() {
+  if (window.goatcounter.count) {
+    while (GC_QUEUE.length) window.goatcounter.count(GC_QUEUE.shift());
+  } else if (!gcTimer && gcTries < 30) {
+    gcTries++;
+    gcTimer = setTimeout(function () { gcTimer = null; gcFlush(); }, 500);
+  }
+}
+/* 우상단 누적 조회수 표시 — 카운터 조회 실패 시 배지 숨김 유지 */
+function gcShowTotal() {
+  fetch("https://shuleb.goatcounter.com/counter//home.json")
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d) return;
+      const n = parseInt(String(d.count).replace(/\D/g, ""), 10);
+      if (isNaN(n)) return;
+      document.getElementById("viewNum").textContent = n.toLocaleString("ko-KR");
+      document.getElementById("views").style.display = "";
+    })
+    .catch(function () {});
+}
+
 /* 페이지별 문제 생성 — 페이지 내 중복 금지, 앞·뒷면 교차 중복 금지(sharedSeen; pageUnique 시트는 면별), 시트 id 해시로 시트마다 다른 수열 */
 function genUnique(sheet, seed, page, sharedSeen, countOverride) {
   const count = countOverride !== undefined ? countOverride : sheet.counts[page];
@@ -1672,6 +1705,7 @@ function exampleHTML(sheet) {
 
 function renderAll() {
   const sheet = SHEETS[state.si];
+  if (state.si !== lastCountedSi) { lastCountedSi = state.si; gcCount("/s/" + sheet.id, sheet.title); }
   const code = encodeCode(state.si, state.seed);
   document.getElementById("sheetCode").textContent = code;
   document.getElementById("blankWrap").style.display = sheet.layout === "grid" ? "flex" : "none";
@@ -1749,8 +1783,11 @@ function initControls() {
 if (typeof document !== "undefined" && document.getElementById("pages")) {
   initControls();
   renderAll();
+  gcCount("/home", "슈렙수학 사칙연산");
+  gcShowTotal();
 }
 if (typeof globalThis !== "undefined") { globalThis.__SHEETS = SHEETS; globalThis.__genUnique = typeof genUnique !== "undefined" ? genUnique : null; }
 </script>
+<script data-goatcounter="https://shuleb.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
