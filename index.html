@@ -54,6 +54,9 @@
   .read-aloud .label { color:var(--red); font-weight:700; }
   .principle { font-size:10pt; margin-bottom:1mm; line-height:1.5; }
   .principle mark { background:var(--hl-y); font-weight:800; padding:0 1mm; }
+  .principle mark, .example mark { display:inline-block; }
+  .eq { display:inline-block; }
+  .sep { margin:0 1.5mm; }
   .encourage { font-size:9pt; color:#555; margin-bottom:2mm; }
 
   .example { border-top:2px solid #bbb; border-bottom:1.5px solid #ddd;
@@ -1203,10 +1206,10 @@ SHEETS.push({
   id: "m2_rule12", book: "곱셈 2단계", cat: "md", layout: "rows",
   title: "곱셈규칙①② 교환법칙·결합법칙", counts: [13, 15],
   readAloud: "소리 내어 읽기",
-  principle: `<b>교환법칙 🔄</b> 곱셈을 직사각형의 넓이로 나타낼 수 있습니다. 3 × 2 ${rectDiag(3, 2)} ↻ 돌리면 → 2 × 3 ${rectDiag(2, 3)} 똑같이 6칸! <mark>두 수를 바꾸어 곱해도 곱의 결과는 같습니다.</mark><br><b>결합법칙 🔀</b> (뒷면) 여러 수의 곱셈에서 순서를 바꾸어 계산해도 곱의 결과는 같습니다. 밑줄 그어진 두 수를 먼저 곱해보세요.`,
+  principle: `<b>교환법칙 🔄</b> 곱셈을 직사각형의 넓이로 나타낼 수 있습니다. 3 × 2 ${rectDiag(3, 2)} ↻ 돌리면 → 2 × 3 ${rectDiag(2, 3)} 똑같이 6칸!<br><mark>두 수를 바꾸어 곱해도 곱의 결과는 같습니다.</mark><br><b>결합법칙 🔀</b> (뒷면) 여러 수의 곱셈에서 순서를 바꾸어 계산해도 곱의 결과는 같습니다. 밑줄 그어진 두 수를 먼저 곱해보세요.`,
   encourage: "집중하는 내가 멋지다! 🖐",
   example: EX(`<span class="red">&lt;교환법칙&gt;</span> 3 × 6 = 6 × 3 = 18 &nbsp;&nbsp;|&nbsp;&nbsp; 8 × 5 = 5 × 8 = 40 &nbsp;&nbsp;|&nbsp;&nbsp; 12 × 6 = 6 × 12 = 72`),
-  page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;결합법칙&gt;</span> <u class="pair">2 × 3</u> × 4 = 6 × 4 = 24 &nbsp;|&nbsp; 2 × <u class="pair">3 × 4</u> = 2 × 12 = 24 &nbsp;|&nbsp; <span class="circ">20</span> × 5 = <span class="circ">2 × 10</span> × 5 = 2 × 5 × 10 = 100</div>`,
+  page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;결합법칙&gt;</span> <u class="pair">2 × 3</u> × 4 = 6 × 4 = 24 &nbsp;|&nbsp; 2 × <u class="pair">3 × 4</u> = 2 × 12 = 24<br><span class="circ">20</span> × 5 = <span class="circ">2 × 10</span> × 5 = 2 × 5 × 10 = 100</div>`,
   keyOf(p) { return p.t === "B" ? `B${p.x * p.m}x${p.b}` : (p.t === "S" ? `S${Math.min(p.a, p.b)}x${Math.max(p.a, p.b)}` : `${p.a}x${p.b}x${p.c}`); },
   gen(rng, page, idx) {
     if (page === 0) {
@@ -1235,7 +1238,7 @@ SHEETS.push({
   id: "m2_rule3", book: "곱셈 2단계", cat: "md", layout: "rows",
   title: "곱셈규칙③ 분배법칙", counts: [4, 5],
   readAloud: "소리 내어 읽기",
-  principle: `<b>분배법칙 🔁</b> 연필을 잡는 순간 ✍ 실력이 자라납니다.<br>5 × 4 ${rectDiag(5, 4)} = ${rectDiag(2, 4, "#fff9c4")} + ${rectDiag(3, 4, "#dbeeff")} → 5 × 4 = (2 + 3) × 4 = <span class="hl-y">2 × 4</span> + <span class="hl-b">3 × 4</span> = 8 + 12 = 20<br><mark>곱셈에서 한 수를 덧셈과 뺄셈으로 바꿔서 각각 곱해도 곱의 결과는 같습니다.</mark> (뒷면은 빼기 버전: 9 × 4 = (10 − 1) × 4 = 10 × 4 − 1 × 4 = 36)`,
+  principle: `<b>분배법칙 🔁</b> 연필을 잡는 순간 ✍ 실력이 자라납니다.<br>5 × 4 ${rectDiag(5, 4)} = ${rectDiag(2, 4, "#fff9c4")} + ${rectDiag(3, 4, "#dbeeff")} → 5 × 4 = (2 + 3) × 4 = <span class="hl-y">2 × 4</span> + <span class="hl-b">3 × 4</span> = 8 + 12 = 20<br><mark>곱셈에서 한 수를 덧셈과 뺄셈으로 바꿔서 각각 곱해도 곱의 결과는 같습니다.</mark><br>(뒷면은 빼기 버전: 9 × 4 = (10 − 1) × 4 = 10 × 4 − 1 × 4 = 36)`,
   encourage: "",
   example: EX(`<u class="pair">12</u> <span class="hl-y">× 5</span> = ( <u class="pair">10 + 2</u> ) <span class="hl-y">× 5</span> = ( 10 <span class="hl-y">× 5</span> ) + ( 2 <span class="hl-y">× 5</span> ) = 50 + 10 = 60`),
   page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;빼기 버전&gt;</span> <u class="pair">28</u> <span class="hl-y">× 4</span> = ( <u class="pair">30 − 2</u> ) <span class="hl-y">× 4</span> = ( 30 <span class="hl-y">× 4</span> ) − ( 2 <span class="hl-y">× 4</span> ) = 120 − 8 = 112</div>`,
@@ -1369,7 +1372,7 @@ SHEETS.push({
   readAloud: "소리 내어 읽기 — 공부는 시작하면 일단 됩니다. 파이팅! ✨",
   principle: `<span style="font-size:8.5pt"><mark>같을 동(同)</mark> <mark>셈 수(數)</mark> <mark>거듭 누(累)</mark> <mark>덜 감(減)</mark></span><br><b>동수누감: 같은 수를 반복하여 빼는 것입니다. 나눗셈에서는 더 이상 뺄 수 없을 때까지 뺍니다.<br>몇 번 뺐는지가 나눗셈의 몫이 됩니다.</b> (뒷면) 곱셈을 활용해봅시다.`,
   encourage: "",
-  example: EX(`30 − 5 − 5 − 5 − 5 − 5 − 5 = 0 &nbsp;(6번 뺐습니다.) &nbsp;&nbsp;|&nbsp;&nbsp; 72 − ( 8 × 9 ) = 0 &nbsp;( 72 )에서 ( 8 )을 ( 9 )번 빼면 0이 됩니다.`),
+  example: EX(`30 − 5 − 5 − 5 − 5 − 5 − 5 = 0 &nbsp;(6번 뺐습니다.)<br>72 − ( 8 × 9 ) = 0 &nbsp;( 72 )에서 ( 8 )을 ( 9 )번 빼면 0이 됩니다.`),
   gen(rng, page, idx) {
     const big = page === 0 ? idx >= 9 : idx >= 10;
     return tryGen(rng, () => {
@@ -1396,7 +1399,7 @@ SHEETS.push({
   principle: `같은 수를 반복해서 뺀 후에 <b>못 빼고 남은 수를 <mark>나머지</mark>라고 합니다.</b><br>곱셈을 활용해봅시다. <mark>*조건: 더 이상 뺄 수 없을 때까지 뺍니다. 나머지는 빼는 수보다 작습니다.</mark><br>나머지는 있을 수도 있고, 없을 수도 있습니다. 나머지가 0이면, 나누어 떨어진다. 나머지가 있으면, 나누어 떨어지지 않는다.`,
   encourage: "",
   example: EX(`50 − ( 7 × 7 ) = 1 &nbsp;&nbsp;( 50 )에서 ( 7 )을 ( 7 )번 빼고 ( 1 )이 남았습니다.`),
-  page2Example: `<div class="example"><span class="tag">보기</span>나머지는 있을 수도 있고, 없을 수도 있습니다. <mark>나머지가 0이면, 나누어 떨어집니다.</mark><br>50 − ( 6 × 8 ) = 2 &nbsp;( 50 )에서 ( 6 )을 ( 8 )번 빼고 ( 2 )가 남았습니다. &nbsp;|&nbsp; 72 − ( 8 × 9 ) = 0 &nbsp;나머지는 ( 0 )</div>`,
+  page2Example: `<div class="example"><span class="tag">보기</span>나머지는 있을 수도 있고, 없을 수도 있습니다. <mark>나머지가 0이면, 나누어 떨어집니다.</mark><br>50 − ( 6 × 8 ) = 2 &nbsp;( 50 )에서 ( 6 )을 ( 8 )번 빼고 ( 2 )가 남았습니다.<br>72 − ( 8 × 9 ) = 0 &nbsp;나머지는 ( 0 )</div>`,
   gen(rng, page, idx) {
     const bigPool = [10, 11, 12, 15, 20, 30];
     const big = page === 1 && idx >= 10;
@@ -1704,6 +1707,51 @@ function exampleHTML(sheet) {
   return "";
 }
 
+// 설명·보기 영역의 수식이 줄 중간에서 끊기지 않도록 인라인 블록으로 묶는다.
+function keepEquations(el) {
+  if (el.querySelector(".example-grids")) return;
+  const MATH = /^[\d()+\-−×÷=….,:%\s]+[가-힣]{0,2}[!.,?]*$/;
+  const isMath = t => MATH.test(t) && /\d|=/.test(t);
+  const SEP = /^[|→—]$/;
+  const INLINE = new Set(["svg", "span", "u", "s", "sub", "sup", "em", "i"]);
+  const units = [];
+  el.childNodes.forEach(n => {
+    if (n.nodeType === 3) {
+      n.nodeValue.split(/(\s+)/).forEach(t => {
+        if (!t) return;
+        if (/^\s+$/.test(t)) units.push({ ws: t });
+        else units.push({ text: t, sep: SEP.test(t), math: !SEP.test(t) && isMath(t) });
+      });
+    } else if (n.nodeType === 1) {
+      const tag = n.tagName.toLowerCase();
+      const cls = n.classList;
+      const math = tag === "svg" || (INLINE.has(tag) && !cls.contains("tag") && !cls.contains("red") && isMath(n.textContent.trim()));
+      units.push({ node: n, math });
+    }
+  });
+  el.textContent = "";
+  let cur = null, ws = "", afterSep = false;
+  const flushWs = (to, plain) => { if (ws) to.appendChild(document.createTextNode(plain ? " " : ws)); ws = ""; };
+  units.forEach(u => {
+    if (u.ws !== undefined) { ws += u.ws; return; }
+    if (u.sep) {
+      cur = null; flushWs(el, true);
+      const sp = document.createElement("span"); sp.className = "sep"; sp.textContent = u.text;
+      el.appendChild(sp); afterSep = true; return;
+    }
+    const node = u.node || document.createTextNode(u.text);
+    if (u.math) {
+      if (!cur) { flushWs(el, afterSep); cur = document.createElement("span"); cur.className = "eq"; el.appendChild(cur); }
+      else flushWs(cur);
+      cur.appendChild(node);
+    } else {
+      cur = null; flushWs(el, afterSep); el.appendChild(node);
+    }
+    afterSep = false;
+  });
+  flushWs(el);
+}
+
 function renderAll() {
   const sheet = SHEETS[state.si];
   if (state.si !== lastCountedSi) { lastCountedSi = state.si; gcCount("/s/" + sheet.id, sheet.title); }
@@ -1731,6 +1779,7 @@ function renderAll() {
     html += `<div class="sheet ${fCls}">${headerHTML(sheet, code, pg)}${intro}${body}${footerHTML(sheet, pg)}</div>`;
   }
   document.getElementById("pages").innerHTML = html;
+  document.querySelectorAll("#pages .principle, #pages .example").forEach(keepEquations);
 }
 
 function initControls() {
