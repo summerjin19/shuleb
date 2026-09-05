@@ -636,7 +636,7 @@ SHEETS.push({
   id: "as1_add2d_nocarry", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, book: "덧셈뺄셈 1단계", cat: "as", layout: "rows",
   title: "받아올림 없는 두 자리 수 덧셈", counts: [4, 5],
   readAloud: "본격적으로 식을 써 봅시다. 두근두근!",
-  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다.<br>십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>답이 바로 보이는 쉬운 문제지만, 우리는 체계적으로 식 쓰는 능력을 길러봅시다. :-D`,
+  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다. 십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>답이 바로 보이는 쉬운 문제지만, 우리는 체계적으로 식 쓰는 능력을 길러봅시다. :-D`,
   encourage: "",
   example: EX(`<span class="hl-y">26</span> <span class="hl-b">+ 33</span> = <span class="hl-y">20 + 6</span> <span class="hl-b">+ 30 + 3</span> = 20 + 30 + 6 + 3 = 50 + 9 = 59<br><span class="hl-y">15</span> <span class="hl-b">+ 63</span> = <span class="hl-y">10 + 5</span> <span class="hl-b">+ 60 + 3</span> = 10 + 60 + 5 + 3 = 70 + 8 = 78`),
   gen(rng) {
@@ -656,7 +656,7 @@ SHEETS.push({
   id: "as2_carry_m1", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, book: "덧셈뺄셈 2단계", cat: "as", layout: "rows",
   title: "받아올림 방법1 십의자리, 일의자리", counts: [4, 5],
   readAloud: "소리 내어 읽어보세요.",
-  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다.<br>십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>여기까지는 같지만 받아올림이 추가됩니다. 능력치 +1 올라갑니다. (/^▽^)/`,
+  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다. 십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>여기까지는 같지만 받아올림이 추가됩니다. 능력치 +1 올라갑니다. (/^▽^)/`,
   encourage: "",
   example: EX(`<span class="hl-y">27</span> <span class="hl-b">+ 14</span> = <span class="hl-y">20 + 7</span> <span class="hl-b">+ 10 + 4</span> = 20 + 10 + 7 + 4 = 30 + 11 = 41`),
   gen(rng) {
@@ -1182,7 +1182,7 @@ SHEETS.push({
   rowClass: "two-col compact", pageUnique: true,
   title: "곱셈구구", counts: [40, 40],
   readAloud: "",
-  principle: `구구단을 잘 외웠나요? 빠르고 정확하게 문제를 해결해봅시다. 🚀<br>다 푸는 데 걸린 시간을 재 보세요. ⏳ (&nbsp;&nbsp;&nbsp;&nbsp;) 분 (&nbsp;&nbsp;&nbsp;&nbsp;) 초`,
+  principle: `구구단을 잘 외웠나요? 빠르고 정확하게 문제를 해결해봅시다. 🚀 <span class="nb">다 푸는 데 걸린 시간을 재 보세요. ⏳ (&nbsp;&nbsp;&nbsp;&nbsp;) 분 (&nbsp;&nbsp;&nbsp;&nbsp;) 초</span>`,
   encourage: "",
   example: "",
   /* 앞·뒷면 합쳐 ×0 문제 1개, ×1 문제 1개만 — 위치는 시드로 결정 */
@@ -1290,7 +1290,7 @@ SHEETS.push({
   id: "m3_vmul_2d1d", cols: 3, book: "곱셈 3단계", cat: "md", layout: "grid",
   title: "곱셈 세로셈 12×3 (부분곱 확장형) 👏", counts: [9, 12],
   readAloud: "소리 내어 읽기",
-  principle: `<mark>세로셈은 자릿수로 나누어, 일의 자리부터 계산합니다.</mark><br>16 × 5 = ( 10 + 6 ) × 5 = ( 10 × 5 ) + ( 6 × 5 ) = 50 + 30 = 80<br><span class="hl-y">일의 자리</span> <span class="hl-b">십의 자리</span>를 수의 자리에 맞게 씁니다.`,
+  principle: `<mark>세로셈은 자릿수로 나누어, 일의 자리부터 계산합니다.</mark><br>16 × 5 = ( 10 + 6 ) × 5 = ( 10 × 5 ) + ( 6 × 5 ) = 50 + 30 = 80 <span class="hl-y">일의 자리</span> <span class="hl-b">십의 자리</span>를 수의 자리에 맞게 씁니다.`,
   encourage: "",
   exampleProb: { a: 16, b: 5 },
   gen(rng) {
@@ -1565,7 +1565,7 @@ SHEETS.push({
   id: "d3_3d2d_q1", cols: 2, gridClass: "cols2", pageUnique: true, keyOf(p) { return "d" + p.d; }, book: "나눗셈 3단계", cat: "md", layout: "grid",
   title: "123÷45 몫이 한 자리", counts: [4, 8], blankCounts: [8, 8],
   readAloud: "소리 내어 읽기 🎆 작은 시작이 큰 기적을 만듭니다. 기적을 만들어보자!",
-  principle: `두 자리 수로 나누어 봅시다. 곱의 계산이 복잡해집니다.<br>654÷83 = 7 …73, 검산식: (83×7) + 73 = 581 + 73 = 654`,
+  principle: `두 자리 수로 나누어 봅시다. 곱의 계산이 복잡해집니다. 654÷83 = 7 …73, 검산식: (83×7) + 73 = 581 + 73 = 654`,
   encourage: "",
   exampleProb: { n: 654, d: 83, q: 7, r: 73 },
   gen(rng, page) {
