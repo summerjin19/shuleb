@@ -56,6 +56,8 @@
   .principle mark { background:var(--hl-y); font-weight:800; padding:0 1mm; }
   .principle mark, .example mark { display:inline-block; }
   .eq { display:inline-block; }
+  .sn { display:inline-block; }
+  .nb { white-space:nowrap; }
   .sep { margin:0 1.5mm; }
   .encourage { font-size:9pt; color:#555; margin-bottom:2mm; }
 
@@ -122,7 +124,7 @@
   .divwrap { display:flex; gap:2.5mm; align-items:flex-start; }
   .divside { font-size:8.5pt; display:flex; flex-direction:column; gap:1mm; width:47mm; }
   .divside .sbox { border:1.2px solid #999; border-radius:1.5mm; padding:0.8mm 2mm; margin-bottom:0; }
-  .sbox-cap { font-size:6.5pt; color:#999; font-weight:400; line-height:1.2; }
+  .sbox-cap { font-size:6pt; color:#999; font-weight:400; line-height:1.2; white-space:nowrap; }
   .divside .sbox .st { font-weight:700; color:#444; }
   .divside .quot { white-space:nowrap; }
   .cbox.qb { min-width:5.6mm; min-height:4.8mm; margin:0 0.3mm; }
@@ -634,7 +636,7 @@ SHEETS.push({
   id: "as1_add2d_nocarry", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, book: "덧셈뺄셈 1단계", cat: "as", layout: "rows",
   title: "받아올림 없는 두 자리 수 덧셈", counts: [4, 5],
   readAloud: "본격적으로 식을 써 봅시다. 두근두근!",
-  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다. 십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>답이 바로 보이는 쉬운 문제지만, 우리는 체계적으로 식 쓰는 능력을 길러봅시다. :-D`,
+  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다.<br>십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>답이 바로 보이는 쉬운 문제지만, 우리는 체계적으로 식 쓰는 능력을 길러봅시다. :-D`,
   encourage: "",
   example: EX(`<span class="hl-y">26</span> <span class="hl-b">+ 33</span> = <span class="hl-y">20 + 6</span> <span class="hl-b">+ 30 + 3</span> = 20 + 30 + 6 + 3 = 50 + 9 = 59<br><span class="hl-y">15</span> <span class="hl-b">+ 63</span> = <span class="hl-y">10 + 5</span> <span class="hl-b">+ 60 + 3</span> = 10 + 60 + 5 + 3 = 70 + 8 = 78`),
   gen(rng) {
@@ -654,7 +656,7 @@ SHEETS.push({
   id: "as2_carry_m1", keyOf(p) { return Math.min(p.a, p.b) + "+" + Math.max(p.a, p.b); }, book: "덧셈뺄셈 2단계", cat: "as", layout: "rows",
   title: "받아올림 방법1 십의자리, 일의자리", counts: [4, 5],
   readAloud: "소리 내어 읽어보세요.",
-  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다. 십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>여기까지는 같지만 받아올림이 추가됩니다. 능력치 +1 올라갑니다. (/^▽^)/`,
+  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다.<br>십의 자리끼리 모아서, 일의 자리끼리 모아서 계산한 후에 더합니다.<br>여기까지는 같지만 받아올림이 추가됩니다. 능력치 +1 올라갑니다. (/^▽^)/`,
   encourage: "",
   example: EX(`<span class="hl-y">27</span> <span class="hl-b">+ 14</span> = <span class="hl-y">20 + 7</span> <span class="hl-b">+ 10 + 4</span> = 20 + 10 + 7 + 4 = 30 + 11 = 41`),
   gen(rng) {
@@ -747,7 +749,7 @@ SHEETS.push({
   id: "as2_borrow_m1", book: "덧셈뺄셈 2단계", cat: "as", layout: "rows",
   title: "받아내림 방법1 십의 자리, 일의 자리", counts: [4, 5],
   readAloud: "소리 내어 읽어보세요.",
-  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다. 더하기는 더하기로 가르고, 빼기는 빼기로 가릅니다.<br><mark>받아내림</mark>을 해야 하기 때문에 <mark>72는 60 더하기 12</mark>로 가르고, <span class="hl-b">빼기 56은 빼기 50, 빼기 6</span>으로 가릅니다. 정말 잘하고 있습니다. 지금처럼만 하면 최고! 🌼`,
+  principle: `두 자리 수를 십의 자리와 일의 자리로 나눕니다. 더하기는 더하기로 가르고, 빼기는 빼기로 가릅니다.<br><mark>받아내림</mark>을 해야 하기 때문에 <mark>72는 60 더하기 12</mark>로 가르고, <span class="hl-b">빼기 56은 빼기 50, 빼기 6</span>으로 가릅니다. <span class="nb">정말 잘하고 있습니다. 지금처럼만 하면 최고! 🌼</span>`,
   encourage: "",
   example: EX(`<span class="hl-y">72</span> <span class="hl-b">− 56</span> = <span class="hl-y">60 + 12</span> <span class="hl-b">− 50 − 6</span> = 60 − 50 + 12 − 6 = 10 + 6 = 16`),
   gen(rng) {
@@ -766,7 +768,7 @@ SHEETS.push({
   id: "as2_borrow_m2", book: "덧셈뺄셈 2단계", cat: "as", layout: "rows",
   title: "받아내림 방법2 많이 빼고 적게 빼기", counts: [7, 8],
   readAloud: "소리 내어 읽어보세요.",
-  principle: `앞수를 몇십으로 만들기 위해 일의 자리를 맞춰 많이 빼고, 남은 일의 자리를 뺍니다.<br>92의 일의 자리 2에 맞춰서 <mark>빼기 46</mark>을 <mark>빼기 42, 빼기 4</mark>로 가릅니다.<br><b><u>두 번째 빼는 수가 한 자리 수입니다.</u></b> 힘들어도 포기하지 않으면 멋진 일이 생깁니다. ❤`,
+  principle: `앞수를 몇십으로 만들기 위해 일의 자리를 맞춰 많이 빼고, 남은 일의 자리를 뺍니다.<br>92의 일의 자리 2에 맞춰서 <mark>빼기 46</mark>을 <mark>빼기 42, 빼기 4</mark>로 가릅니다. <b><u>두 번째 빼는 수가 한 자리 수입니다.</u></b> 힘들어도 포기하지 않으면 멋진 일이 생깁니다. ❤`,
   encourage: "",
   example: EX(`92 <span class="hl-y">− 46</span> = 92 <span class="hl-y">− 42 − 4</span> = 50 − 4 = 46`),
   gen(rng) {
@@ -784,7 +786,7 @@ SHEETS.push({
   id: "as2_borrow_m3", book: "덧셈뺄셈 2단계", cat: "as", layout: "rows",
   title: "받아내림 방법3 적게 빼고 많이 빼기", counts: [7, 8],
   readAloud: "소리 내어 읽어보세요.",
-  principle: `앞수를 몇십으로 만들기 위해 일의 자리 만큼만 먼저 빼고, 남은 수를 뺍니다.<br>51의 일의 자리 1에 맞춰서 <mark>빼기 16</mark>을 <mark>빼기 1, 빼기 15</mark>로 가릅니다.<br><b><u>첫 번째 빼는 수가 한 자리 수입니다.</u></b> 조금 느려도 괜찮습니다. 천천히 끝까지 함께갑시다. 🌈`,
+  principle: `앞수를 몇십으로 만들기 위해 일의 자리 만큼만 먼저 빼고, 남은 수를 뺍니다.<br>51의 일의 자리 1에 맞춰서 <mark>빼기 16</mark>을 <mark>빼기 1, 빼기 15</mark>로 가릅니다. <b><u>첫 번째 빼는 수가 한 자리 수입니다.</u></b> <span class="nb">조금 느려도 괜찮습니다. 천천히 끝까지 함께갑시다. 🌈</span>`,
   encourage: "",
   example: EX(`51 <span class="hl-y">− 16</span> = 51 <span class="hl-y">− 1 − 15</span> = 50 − 15 = 35`),
   gen(rng) {
@@ -828,7 +830,7 @@ SHEETS.push({
     return tryGen(rng, () => ({ a: rngInt(rng, 12, 88), b: rngInt(rng, 12, 88) }),
       p => ones(p.a) >= 1 && ones(p.b) >= 1 && ones(p.a) + ones(p.b) <= 9 && tens(p.a) + tens(p.b) <= 9);
   },
-  render(p, show, page, blank) { return vaddExpanded(p, show, blank, page === -1); }
+  render(p, show, page, blank) { return vaddExpanded(p, show, blank, true); }
 });
 
 SHEETS.push({
@@ -842,7 +844,7 @@ SHEETS.push({
     return tryGen(rng, () => ({ a: rngInt(rng, 12, 97), b: rngInt(rng, 12, 97) }),
       p => ones(p.a) >= 1 && ones(p.b) >= 1 && ones(p.a) + ones(p.b) >= 10);
   },
-  render(p, show, page, blank) { return vaddExpanded(p, show, blank, page === -1); }
+  render(p, show, page, blank) { return vaddExpanded(p, show, blank, true); }
 });
 
 SHEETS.push({
@@ -870,7 +872,7 @@ SHEETS.push({
     return tryGen(rng, () => ({ a: rngInt(rng, 32, 89), b: rngInt(rng, 12, 77) }),
       p => p.a > p.b && ones(p.b) >= 1 && ones(p.a) > ones(p.b) && tens(p.a) > tens(p.b));
   },
-  render(p, show, page, blank) { return vsubExpanded(p, show, blank, false, page === -1); }
+  render(p, show, page, blank) { return vsubExpanded(p, show, blank, false, true); }
 });
 
 SHEETS.push({
@@ -884,7 +886,7 @@ SHEETS.push({
     return tryGen(rng, () => ({ a: rngInt(rng, 30, 92), b: rngInt(rng, 12, 79) }),
       p => p.a > p.b && ones(p.a) < ones(p.b) && (tens(p.a) - 1) >= tens(p.b));
   },
-  render(p, show, page, blank) { return vsubExpanded(p, show, blank, true, page === -1); }
+  render(p, show, page, blank) { return vsubExpanded(p, show, blank, true, true); }
 });
 
 SHEETS.push({
@@ -932,7 +934,7 @@ SHEETS.push({
   id: "as4_add3_front", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
   title: "세 수의 덧셈 - 앞부터", counts: [14, 16],
   readAloud: "앞의 두 수를 먼저 더합니다.",
-  principle: `빈 자리에 세로셈을 써서 계산해도 좋습니다. 세로셈을 쓸 때는 수의 자리를 맞춰 쓰세요.<br>웃으면서 해봅시다, 그게 진짜 실력입니다. 😄`,
+  principle: `빈 자리에 세로셈을 써서 계산해도 좋습니다. 세로셈을 쓸 때는 수의 자리를 맞춰 쓰세요. 웃으면서 해봅시다, 그게 진짜 실력입니다. 😄`,
   encourage: "",
   example: EX(`<span class="circ">7 + 8</span> + 34 = <span class="circ">15</span> + 34 = 49`),
   gen(rng, page) {
@@ -964,7 +966,7 @@ SHEETS.push({
   id: "as4_sub3_front", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
   title: "세 수의 뺄셈 - 앞부터", counts: [14, 16],
   readAloud: "첫 번째 수에서 두 번째 수를 먼저 뺍니다.",
-  principle: `빈 자리에 세로셈을 써서 계산해도 좋습니다. 세로셈을 쓸 때는 수의 자리를 맞춰 쓰세요.<br>꾸준한 노력은 반드시 빛을 발합니다. \\( ˙▿˙ )/`,
+  principle: `빈 자리에 세로셈을 써서 계산해도 좋습니다. 세로셈을 쓸 때는 수의 자리를 맞춰 쓰세요. 꾸준한 노력은 반드시 빛을 발합니다. \\( ˙▿˙ )/`,
   encourage: "",
   example: EX(`<span class="circ">98 − 9</span> − 7 = <span class="circ">89</span> − 7 = 82`),
   gen(rng, page) {
@@ -982,7 +984,7 @@ SHEETS.push({
   id: "as4_sub3_back", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
   title: "세 수의 뺄셈 - 뒤부터", counts: [14, 16],
   readAloud: "빼는 두 수를 먼저 계산합니다.",
-  principle: `<mark>빼기 7, 빼기 8은 빼기 15와 같습니다.</mark> 빈 자리에 세로셈을 써서 계산해도 좋습니다.<br>지치더라도 멈추지 말고 해냅시다. 💫`,
+  principle: `<mark>빼기 7, 빼기 8은 빼기 15와 같습니다.</mark> 빈 자리에 세로셈을 써서 계산해도 좋습니다. 지치더라도 멈추지 말고 해냅시다. 💫`,
   encourage: "",
   example: EX(`95 <span class="circ">− 7</span> <span class="circ">− 8</span> = 95 <span class="circ">− 15</span> = 80`),
   gen(rng, page) {
@@ -1024,10 +1026,10 @@ SHEETS.push({
   id: "as4_mix3_back", book: "덧셈뺄셈 4단계", cat: "as", layout: "rows",
   title: "세 수의 덧뺄셈 - 뒤부터", counts: [14, 15],
   readAloud: "뒤에 있는 두 수를 먼저 계산합니다.",
-  principle: `<mark>더하기 9, 빼기 6은 더하기 3과 같습니다.</mark> <mark>빼기 9와 더하기 8은 빼기 1과 같습니다.</mark><br>이것을 이해하는 여러분은 <b>수.학.천.재.</b>입니다. 바로 지금 이 순간! 여러분의 연산력이 쑥쑥 올라갑니다. ✈`,
+  principle: `<mark>더하기 9, 빼기 6은 더하기 3과 같습니다.</mark> <mark>빼기 9와 더하기 8은 빼기 1과 같습니다.</mark><br>이것을 이해하는 여러분은 <b>수.학.천.재.</b>입니다. <span class="nb">바로 지금 이 순간! 여러분의 연산력이 쑥쑥 올라갑니다. ✈</span>`,
   encourage: "",
   example: EX(`43 <span class="opcirc">+ 9</span><span class="opcirc">− 6</span> = 43 <span class="opcirc">+ 3</span> = 46 &nbsp;&nbsp;|&nbsp;&nbsp; 11 <span class="opcirc">− 9</span><span class="opcirc">+ 8</span> = 11 <span class="opcirc">− 1</span> = 10`),
-  page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;업그레이드!&gt;</span> <mark>빼기 19와 더하기 59는 더하기 40과 같습니다.</mark> 꼭꼭 세로셈을 써서 계산하세요. 정확한 것이 실력!<br>38 <span class="opcirc">− 19</span><span class="opcirc">+ 59</span> = 38 − 19 <span class="hl-y">+ 19 + 40</span> = 38 <span class="opcirc">+ 40</span> = 78</div>`,
+  page2Example: `<div class="example"><span class="tag">보기</span><span class="red">&lt;업그레이드!&gt;</span> <mark>빼기 19와 더하기 59는 더하기 40과 같습니다.</mark> <span class="nb">꼭꼭 세로셈을 써서 계산하세요. 정확한 것이 실력!</span><br>38 <span class="opcirc">− 19</span><span class="opcirc">+ 59</span> = 38 − 19 <span class="hl-y">+ 19 + 40</span> = 38 <span class="opcirc">+ 40</span> = 78</div>`,
   gen(rng, page) {
     const small = page === 0;
     return tryGen(rng, () => {
@@ -1087,7 +1089,7 @@ SHEETS.push({
   id: "m1_convert", book: "곱셈 1단계", cat: "md", layout: "rows",
   title: "동수누가 바꾸기", counts: [7, 8],
   readAloud: "소리 내어 읽기",
-  principle: `같은 수의 덧셈을 이용해서 곱셈을 바꿀 수 있어요.<br>가르기 방법) 8 = 4 + 4로, 9 = 3 + 3 + 3으로 바꿀 수 있습니다.<br>모으기·바꾸기 방법) 3 + 3 = 2 + 2 + 2 → 3을 2번 더한 것과 2를 3번 더한 것은 같습니다. ｡^‿^｡ 해보자, 해내자!`,
+  principle: `같은 수의 덧셈을 이용해서 곱셈을 바꿀 수 있어요. ｡^‿^｡ 해보자, 해내자!<br>가르기 방법) 8 = 4 + 4로, 9 = 3 + 3 + 3으로 바꿀 수 있습니다.<br>모으기·바꾸기 방법) 3 + 3 = 2 + 2 + 2 → 3을 2번 더한 것과 2를 3번 더한 것은 같습니다.`,
   encourage: "",
   example: EX(`8 × 5 = 8 + 8 + 8 + 8 + 8 = 4+4+4+4+4+4+4+4+4+4 = 4 × 10 = 40`),
   pageUnique: true,
@@ -1142,7 +1144,7 @@ SHEETS.push({
   id: "m1_dist_sub", book: "곱셈 1단계", cat: "md", layout: "rows",
   title: "동수누가 빼기 응용", counts: [2, 3],
   readAloud: "소리 내어 읽기",
-  principle: `덧셈과 뺄셈을 이용해서 완전히 다른 모습의 곱셈으로 바꿀 수 있어요.<br>잘하는 사람이 이기는 것이 아니라 🚩 끝까지 해낸 사람이 이깁니다.`,
+  principle: `덧셈과 뺄셈을 이용해서 완전히 다른 모습의 곱셈으로 바꿀 수 있어요. 잘하는 사람이 이기는 것이 아니라 🚩 끝까지 해낸 사람이 이깁니다.`,
   encourage: "",
   example: EX(`29 × 4 = 29 + 29 + 29 + 29<br>= 30−1 &nbsp;+&nbsp; 30−1 &nbsp;+&nbsp; 30−1 &nbsp;+&nbsp; 30−1<br>= 30+30+30+30 &nbsp;−&nbsp; 1−1−1−1<br>= 30 × 4 &nbsp;−&nbsp; 1 × 4<br>= 120 − 4 &nbsp;=&nbsp; 116`),
   keyOf(p) { return `${p.a}`; },
@@ -1288,27 +1290,27 @@ SHEETS.push({
   id: "m3_vmul_2d1d", cols: 3, book: "곱셈 3단계", cat: "md", layout: "grid",
   title: "곱셈 세로셈 12×3 (부분곱 확장형) 👏", counts: [9, 12],
   readAloud: "소리 내어 읽기",
-  principle: `<mark>세로셈은 자릿수로 나누어, 일의 자리부터 계산합니다.</mark><br>16 × 5 = ( 10 + 6 ) × 5 = ( 10 × 5 ) + ( 6 × 5 ) = 50 + 30 = 80 &nbsp;— <span class="hl-y">일의 자리</span> <span class="hl-b">십의 자리</span>를 수의 자리에 맞게 씁니다.`,
+  principle: `<mark>세로셈은 자릿수로 나누어, 일의 자리부터 계산합니다.</mark><br>16 × 5 = ( 10 + 6 ) × 5 = ( 10 × 5 ) + ( 6 × 5 ) = 50 + 30 = 80<br><span class="hl-y">일의 자리</span> <span class="hl-b">십의 자리</span>를 수의 자리에 맞게 씁니다.`,
   encourage: "",
   exampleProb: { a: 16, b: 5 },
   gen(rng) {
     return tryGen(rng, () => ({ a: genNoZero(rng, 12, 99), b: rngInt(rng, 2, 9) }),
       p => p.a * p.b <= 999);
   },
-  render(p, show, page, blank) { return vmulExpanded(p, show, blank, 3, page === -1); }
+  render(p, show, page, blank) { return vmulExpanded(p, show, blank, 3, true); }
 });
 
 SHEETS.push({
   id: "m3_vmul_3d1d", cols: 3, book: "곱셈 3단계", cat: "md", layout: "grid",
   title: "곱셈 세로셈 123×4 (부분곱 확장형) 😊", counts: [9, 12],
   readAloud: "소리 내어 읽기",
-  principle: `🔁 <mark>곱셈법칙③ 분배법칙: 덧셈으로 나눈 것에 각각 곱합니다.</mark><br>387 × 4 = (300+80+7) × 4 = (300×4) + (80×4) + (7×4) = 1200 + 320 + 28 = 1548<br>( ^ O ^ ) 오! 이렇게 어려운 것을 이해하다니! 🤟`,
+  principle: `🔁 <mark>곱셈법칙③ 분배법칙: 덧셈으로 나눈 것에 각각 곱합니다.</mark><br>387 × 4 = (300+80+7) × 4 = (300×4) + (80×4) + (7×4) = 1200 + 320 + 28 = 1548<br><span class="nb">( ^ O ^ ) 오! 이렇게 어려운 것을 이해하다니! 🤟</span>`,
   encourage: "",
   exampleProb: { a: 387, b: 4 },
   gen(rng) {
     return tryGen(rng, () => ({ a: genNoZero(rng, 112, 999), b: rngInt(rng, 2, 9) }), () => true);
   },
-  render(p, show, page, blank) { return vmulExpanded(p, show, blank, 4, page === -1, true); }
+  render(p, show, page, blank) { return vmulExpanded(p, show, blank, 4, true, true); }
 });
 
 SHEETS.push({
@@ -1329,13 +1331,13 @@ SHEETS.push({
   id: "m3_vmul_2d2d", cols: 3, book: "곱셈 3단계", cat: "md", layout: "grid",
   title: "곱셈 세로셈 12×34 ▶", counts: [9, 12],
   readAloud: "😄 16×13을 그림·식·세로셈으로!",
-  principle: `16×13 = (10+6)×13 = (10×13) + (6×13) = <span class="hl-y">(10×10)</span> + <span class="hl-b">(10×3)</span> + (6×10) + (6×3)<br>👑 곱셈과 받아올림 덧셈을 한번에 계산합니다. <mark>16×3, 16×10 — 이 부분을 잘 쓰는 것이 중요합니다.</mark> 곱셈의 끝판왕! 성공!`,
+  principle: `16×13 = (10+6)×13 = (10×13) + (6×13) = <span class="hl-y">(10×10)</span> + <span class="hl-b">(10×3)</span> + (6×10) + (6×3)<br>👑 곱셈과 받아올림 덧셈을 한번에 계산합니다. <mark>16×3, 16×10 — 이 부분을 잘 쓰는 것이 중요합니다.</mark> <span class="nb">곱셈의 끝판왕! 성공!</span>`,
   encourage: "",
   exampleProb: { a: 16, b: 13 },
   gen(rng) {
     return tryGen(rng, () => ({ a: genNoZero(rng, 11, 99), b: genNoZero(rng, 11, 99) }), () => true);
   },
-  render(p, show, page, blank) { return vmul2d(p, show, blank, { fixedW: 4, notes: page === -1 }); }
+  render(p, show, page, blank) { return vmul2d(p, show, blank, { fixedW: 4, notes: true }); }
 });
 
 /* ── 곱셈 4단계 ── */
@@ -1349,20 +1351,20 @@ SHEETS.push({
   gen(rng) {
     return tryGen(rng, () => ({ a: genNoZero(rng, 112, 999), b: genNoZero(rng, 12, 99) }), () => true);
   },
-  render(p, show, page, blank) { return vmul2d(p, show, blank, { memo: true, fixedW: 5, dense: true, notes: page === -1 }); }
+  render(p, show, page, blank) { return vmul2d(p, show, blank, { memo: true, fixedW: 5, dense: true, notes: true }); }
 });
 
 SHEETS.push({
   id: "m4_vmul_4d2d", cols: 3, book: "곱셈 4단계", cat: "md", layout: "grid",
   title: "곱셈 세로셈 1234×56 이게 가능하다고? 🤩", counts: [9, 12],
   readAloud: "🎉 문제가 클수록 천천히 생각하는 연습이 필요합니다. 마음을 가볍게.",
-  principle: `수학은 조립식입니다. 🛠 복잡해 보여도, 하나씩 분해하면 다 풀 수 있어요.<br>🍊 천천히 해도 괜찮습니다. 중요한 건 계속한다는 거죠.`,
+  principle: `수학은 조립식입니다. 🛠 복잡해 보여도, 하나씩 분해하면 다 풀 수 있어요.<br><span class="nb">🍊 천천히 해도 괜찮습니다. 중요한 건 계속한다는 거죠.</span>`,
   encourage: "",
   exampleProb: { a: 6552, b: 12 },
   gen(rng) {
     return tryGen(rng, () => ({ a: genNoZero(rng, 1112, 9999), b: genNoZero(rng, 12, 99) }), () => true);
   },
-  render(p, show, page, blank) { return vmul2d(p, show, blank, { memo: true, fixedW: 6, dense: true, notes: page === -1 }); }
+  render(p, show, page, blank) { return vmul2d(p, show, blank, { memo: true, fixedW: 6, dense: true, notes: true }); }
 });
 
 /* ── 나눗셈 1단계 ── */
@@ -1370,7 +1372,7 @@ SHEETS.push({
   id: "d1_repsub", pageUnique: true, keyOf(p) { return p.d >= 10 ? `B${p.d}` : `${p.d}x${p.k}`; }, book: "나눗셈 1단계", cat: "md", layout: "rows",
   title: "동수누감 同數累減 (같은 수를 반복하여 뺀다)", counts: [13, 16],
   readAloud: "소리 내어 읽기 — 공부는 시작하면 일단 됩니다. 파이팅! ✨",
-  principle: `<span style="font-size:8.5pt"><mark>같을 동(同)</mark> <mark>셈 수(數)</mark> <mark>거듭 누(累)</mark> <mark>덜 감(減)</mark></span><br><b>동수누감: 같은 수를 반복하여 빼는 것입니다. 나눗셈에서는 더 이상 뺄 수 없을 때까지 뺍니다.<br>몇 번 뺐는지가 나눗셈의 몫이 됩니다.</b> (뒷면) 곱셈을 활용해봅시다.`,
+  principle: `<span style="font-size:8.5pt"><mark>같을 동(同)</mark> <mark>셈 수(數)</mark> <mark>거듭 누(累)</mark> <mark>덜 감(減)</mark></span><br><b>동수누감: 같은 수를 반복하여 빼는 것입니다. 나눗셈에서는 더 이상 뺄 수 없을 때까지 뺍니다.</b><br><b>몇 번 뺐는지가 나눗셈의 몫이 됩니다.</b> (뒷면) 곱셈을 활용해봅시다.`,
   encourage: "",
   example: EX(`30 − 5 − 5 − 5 − 5 − 5 − 5 = 0 &nbsp;(6번 뺐습니다.)<br>72 − ( 8 × 9 ) = 0 &nbsp;( 72 )에서 ( 8 )을 ( 9 )번 빼면 0이 됩니다.`),
   gen(rng, page, idx) {
@@ -1456,7 +1458,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 10 && p.n <= 99);
   },
-  render(p, show, page, blank) { return longDiv(p, show, blank, { dense: true, fixedW: 2, fixedQ: 1, notes: page === -1 }); }
+  render(p, show, page, blank) { return longDiv(p, show, blank, { dense: true, fixedW: 2, fixedQ: 1, notes: true }); }
 });
 
 SHEETS.push({
@@ -1474,7 +1476,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.q >= 11 && p.q <= 99 && p.n <= 99 && p.n >= 10 && p.q % 10 !== 0);
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 2, dense: true, fixedW: 2, fixedQ: 2, showQuot: true, stepHints: page === 0, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 2, dense: true, fixedW: 2, fixedQ: 2, showQuot: true, stepHints: page === 0, notes: true }); }
 });
 
 SHEETS.push({
@@ -1494,7 +1496,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.q >= 10 && p.q <= 99 && p.n >= 100 && p.n <= 999 && (idx === 2 || p.q % 10 !== 0));
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 2, showQuot: true, stepHints: page === 0, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 2, showQuot: true, stepHints: page === 0, notes: true }); }
 });
 
 SHEETS.push({
@@ -1512,7 +1514,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.q >= 100 && p.q <= 999 && !String(p.q).includes("0") && p.n <= 999 && p.n >= 100);
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 3, showQuot: true, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 3, showQuot: true, notes: true }); }
 });
 
 SHEETS.push({
@@ -1537,7 +1539,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.q >= 100 && p.q <= 999 && p.n <= 999 && p.n >= 100);
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 3, showQuot: true, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense2: true, fixedW: 3, fixedQ: 3, showQuot: true, notes: true }); }
 });
 
 /* ── 나눗셈 3단계 (두 자리 수로 나누기) ── */
@@ -1556,7 +1558,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 10 && p.n <= 99 && p.q >= 1 && p.q <= 9 && p.r < p.d && p.d % 10 !== 0);
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 2, dense: true, fixedW: 2, fixedQ: 1, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 2, dense: true, fixedW: 2, fixedQ: 1, notes: true }); }
 });
 
 SHEETS.push({
@@ -1574,7 +1576,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 100 && p.n <= 999 && p.q >= 2 && p.q <= 9 && p.r < p.d && p.d % 10 !== 0);
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense: true, fixedW: 3, fixedQ: 1, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, dense: true, fixedW: 3, fixedQ: 1, notes: true }); }
 });
 
 SHEETS.push({
@@ -1592,7 +1594,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 100 && p.n <= 999 && p.q >= 10 && p.q <= 99 && p.r < p.d && p.r >= 0 && p.d % 10 !== 0 && (idx === 3 || p.q % 10 !== 0));
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, miniParts: 2, dense2: true, fixedW: 3, fixedQ: 2, showQuot: true, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: true, miniW: 3, miniParts: 2, dense2: true, fixedW: 3, fixedQ: 2, showQuot: true, notes: true }); }
 });
 
 SHEETS.push({
@@ -1610,7 +1612,7 @@ SHEETS.push({
       return { d, q, r, n: d * q + r };
     }, p => p.n >= 1000 && p.n <= 9999 && p.q >= 10 && p.r < p.d && p.r >= 0 && p.d % 10 !== 0 && (idx === 2 || !String(p.q).includes("0")));
   },
-  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: page !== -1, miniW: 4, miniParts: 3, dense2: true, fixedW: 4, fixedQ: 3, showQuot: true, notes: page === -1 }); }
+  render(p, show, page, blank) { return divProblem(p, show, blank, { side: true, miniCheck: page !== -1, miniW: 4, miniParts: 3, dense2: true, fixedW: 4, fixedQ: 3, showQuot: true, notes: true }); }
 });
 
 /* ── 빈 학습지 (줄 노트) ── */
@@ -1752,6 +1754,50 @@ function keepEquations(el) {
   flushWs(el);
 }
 
+// 설명·보기 영역을 문장 단위 인라인 블록으로 묶어 문장이 줄 중간에서 끊기지 않게 한다.
+function keepSentences(el) {
+  if (el.querySelector(".example-grids")) return;
+  el.normalize();
+  const BLOCK = new Set(["DIV", "TABLE", "BR", "P"]);
+  const units = [];
+  let cur = [], termAfterEl = false;
+  const cut = () => { if (cur.length) units.push(cur); cur = []; };
+  el.childNodes.forEach(n => {
+    if (n.nodeType === 1 && (BLOCK.has(n.tagName) || n.classList.contains("tag"))) { cut(); units.push(n); termAfterEl = false; return; }
+    if (n.nodeType === 3) {
+      let t = n.nodeValue;
+      if (termAfterEl && /^\s/.test(t)) { cut(); t = t.replace(/^\s+/, ""); }
+      termAfterEl = false;
+      t.split(/(?<=[.!?])\s+/).forEach((seg, i) => {
+        if (i > 0) cut();
+        if (!cur.length) seg = seg.replace(/^\s+/, "");
+        if (seg) cur.push(document.createTextNode(seg));
+      });
+      return;
+    }
+    if (n.nodeType !== 1) return;
+    cur.push(n);
+    termAfterEl = /[.!?]$/.test(n.textContent.trim());
+  });
+  cut();
+  const hasWord = u => /[가-힣0-9]/.test(u.map(x => x.textContent).join(""));
+  const merged = [];
+  units.forEach(u => {
+    const prev = merged[merged.length - 1];
+    if (Array.isArray(u) && Array.isArray(prev) && !hasWord(u)) { prev.push(document.createTextNode(" "), ...u); return; }
+    merged.push(u);
+  });
+  el.textContent = "";
+  let prevInline = false;
+  merged.forEach(u => {
+    if (!Array.isArray(u)) { el.appendChild(u); prevInline = false; return; }
+    if (prevInline) el.appendChild(document.createTextNode(" "));
+    const sp = document.createElement("span"); sp.className = "sn";
+    u.forEach(x => sp.appendChild(x));
+    el.appendChild(sp); prevInline = true;
+  });
+}
+
 function renderAll() {
   const sheet = SHEETS[state.si];
   if (state.si !== lastCountedSi) { lastCountedSi = state.si; gcCount("/s/" + sheet.id, sheet.title); }
@@ -1779,7 +1825,7 @@ function renderAll() {
     html += `<div class="sheet ${fCls}">${headerHTML(sheet, code, pg)}${intro}${body}${footerHTML(sheet, pg)}</div>`;
   }
   document.getElementById("pages").innerHTML = html;
-  document.querySelectorAll("#pages .principle, #pages .example").forEach(keepEquations);
+  document.querySelectorAll("#pages .principle, #pages .example").forEach(e => { keepEquations(e); keepSentences(e); });
 }
 
 function initControls() {
